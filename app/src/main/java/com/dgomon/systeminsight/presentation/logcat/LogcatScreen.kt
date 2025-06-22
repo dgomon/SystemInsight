@@ -34,7 +34,7 @@ fun LogcatScreen(viewModel: LogcatViewModel = viewModel()) {
         items(logs) { line ->
             Text(
                 text = line,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = 2.dp)
             )
         }
