@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.dgomon.systeminsight"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.dgomon.systeminsight"
@@ -56,7 +56,6 @@ dependencies {
 
     implementation(libs.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.activity.compose.vx)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
@@ -64,6 +63,7 @@ dependencies {
 
     // Hilt (optional, but recommended)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.navigation.compose)
     kapt(libs.dagger.hilt.compiler)
 
     // For flow-based stream parsing

@@ -1,10 +1,10 @@
-package com.dgomon.systeminsight.root
+package com.dgomon.systeminsight
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
-import com.dgomon.systeminsight.presentation.GetProp.GetPropScreen
+import com.dgomon.systeminsight.ui.SystemInsightApp
 
 class MainActivity : ComponentActivity() {
 
@@ -12,8 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-//                LogcatScreen()
-                GetPropScreen()
+                SystemInsightApp()
             }
         }
     }

@@ -1,32 +1,22 @@
 [versions]
-activityComposeVersion = "..."
-agp = "8.10.0"
+agp = "8.10.1"
 hiltAndroid = "2.56.2"
-hiltCompiler = "1.2.0"
-kotlin = "2.0.21"
-hiltVersion = "2.53"
+kotlin = "2.1.21"
+hiltVersion = "2.56.2"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-kotlinxCoroutinesAndroid = "..."
 kotlinxCoroutinesCore = "1.10.2"
-kotlinxCoroutinesFlow = "1.10.2"
-lifecycleRuntimeKtx = "2.9.0"
 activityCompose = "1.10.1"
-composeBom = "2024.09.00"
 lifecycleViewmodelCompose = "..."
-ui = "..."
+navigationCompose = "2.9.0"
 
 [libraries]
-androidx-activity-compose-vx = { module = "androidx.activity:activity-compose", version = "1.10.1" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version = "2.56.2" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltVersion" }
-hilt-android-gradle-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hiltVersion" }
-dagger-android-processor = { group = "com.google.dagger", name = "dagger-android-processor", version.ref = "hiltVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -42,8 +32,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version = "1.10.2" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
-#kotlinx-coroutines-flow = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-flow", version.ref = "kotlinxCoroutinesFlow" }
 ui = { module = "androidx.compose.ui:ui", version = "1.8.3" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
