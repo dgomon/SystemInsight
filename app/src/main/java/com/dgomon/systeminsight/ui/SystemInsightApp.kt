@@ -17,10 +17,13 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.dgomon.systeminsight.presentation.GetProp.GetPropScreen
+import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
+import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import kotlinx.coroutines.launch
 
@@ -31,7 +34,7 @@ fun SystemInsightApp() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val items = listOf(Screen.Logcat, Screen.GetProp)
+    val items = listOf(Screen.Dumpsys, Screen.Logcat, Screen.GetProp)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -59,12 +62,12 @@ fun SystemInsightApp() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("My App") },
+                    title = { Text(stringResource(id = R.string.app_name)) },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch { drawerState.open() }
                         }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            Icon(Icons.Default.Menu, contentDescription = stringResource(R.string.menu))
                         }
                     }
                 )
@@ -75,6 +78,7 @@ fun SystemInsightApp() {
                 startDestination = Screen.Logcat.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
+                composable(Screen.Dumpsys.route) { DumpsysScreen() }
                 composable(Screen.Logcat.route) { LogcatScreen() }
                 composable(Screen.GetProp.route) { GetPropScreen() }
             }

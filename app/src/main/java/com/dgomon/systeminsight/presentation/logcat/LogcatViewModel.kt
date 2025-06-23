@@ -24,7 +24,7 @@ class LogcatViewModel @Inject constructor() : ViewModel() {
     private fun startLogcat() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val process = Runtime.getRuntime().exec("logcat")
+                val process = Runtime.getRuntime().exec("su -c logcat")
                 val reader = BufferedReader(InputStreamReader(process.inputStream))
 
                 val buffer = mutableListOf<String>()
@@ -32,7 +32,7 @@ class LogcatViewModel @Inject constructor() : ViewModel() {
                 while (true) {
                     val line = reader.readLine() ?: break
                     buffer.add(line)
-                    if (buffer.size > 1000) buffer.removeFirst() // Limit memory usage
+                    if (buffer.size > 1000) buffer.removeAt(0) // Limit memory usage
                     _logLines.value = buffer.toList()
                 }
 

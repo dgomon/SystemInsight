@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.presentation.GetProp
+package com.dgomon.systeminsight.presentation.dumpsys
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,19 +12,19 @@ import java.io.InputStreamReader
 import javax.inject.Inject
 
 @HiltViewModel
-class GetPropViewModel @Inject constructor() : ViewModel() {
+class DumpsysViewModel @Inject constructor() : ViewModel() {
 
-    private val _props = MutableStateFlow<List<String>>(emptyList())
-    val props: StateFlow<List<String>> = _props
+    private val _lines = MutableStateFlow<List<String>>(emptyList())
+    val lines: StateFlow<List<String>> = _lines
 
     init {
-        getProps()
+        dumpsys()
     }
 
-    private fun getProps() {
+    private fun dumpsys() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val process = Runtime.getRuntime().exec("getprop")
+                val process = Runtime.getRuntime().exec("dumpsys battery")
                 val reader = BufferedReader(InputStreamReader(process.inputStream))
 
                 val buffer = mutableListOf<String>()
@@ -32,14 +32,13 @@ class GetPropViewModel @Inject constructor() : ViewModel() {
                 while (true) {
                     val line = reader.readLine() ?: break
                     buffer.add(line)
-                    if (buffer.size > 1000) buffer.removeAt(0) // Limit memory usage
-                    _props.value = buffer.toList()
+                    if (buffer.size > 1000) buffer.removeFirst() // Limit memory usage
+                    _lines.value = buffer.toList()
                 }
 
             } catch (e: Exception) {
-                _props.value = listOf("Error reading logcat: ${e.message}")
+                _lines.value = listOf("Error reading logcat: ${e.message}")
             }
         }
     }
-
 }
