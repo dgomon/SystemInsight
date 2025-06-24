@@ -75,7 +75,7 @@ fun SystemInsightApp() {
         ) { innerPadding ->
             NavHost(
                 navController,
-                startDestination = Screen.Logcat.route,
+                startDestination = Screen.Dumpsys.route,
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Dumpsys.route) { DumpsysScreen() }

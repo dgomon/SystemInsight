@@ -64,6 +64,7 @@ dependencies {
     // Hilt (optional, but recommended)
     implementation(libs.hilt.android)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.dagger.hilt.compiler)
 
     // For flow-based stream parsing

@@ -10,8 +10,9 @@ class ShellCommandExecutor @Inject constructor() {
     suspend fun runCommand(command: String): List<String> = withContext(Dispatchers.IO) {
         try {
             val process = Runtime.getRuntime().exec(command)
-            val reader = BufferedReader(InputStreamReader(process.inputStream))
-            reader.lineSequence().toList()
+            BufferedReader(InputStreamReader(process.inputStream))
+                .lineSequence()
+                .toList()
         } catch (e: Exception) {
             listOf("Error: ${e.message}")
         }
