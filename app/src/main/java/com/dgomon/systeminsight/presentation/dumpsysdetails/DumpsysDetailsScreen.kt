@@ -1,8 +1,6 @@
-package com.dgomon.systeminsight.presentation.dumpsys
+package com.dgomon.systeminsight.presentation.dumpsysdetails
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,22 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun DumpsysScreen(
-    viewModel: DumpsysViewModel = hiltViewModel(),
-    onServiceClick: (String) -> Unit
+fun DumpsysDetailsScreen(
+    viewModel: DumpsysDetailsViewModel = hiltViewModel()
 ) {
-    val services by viewModel.services.collectAsState()
+    val output by viewModel.serviceOutput.collectAsState()
 
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        items(services) { service ->
-            Text(
-                text = service,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onServiceClick(service) }
-                    .padding(8.dp),
-                style = MaterialTheme.typography.bodyLarge
-            )
+        items(output) { line ->
+            Text(text = line, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

@@ -18,18 +18,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dgomon.systeminsight.R
-import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
-import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
-import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SystemInsightApp() {
+fun AppNavHost() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -73,15 +68,13 @@ fun SystemInsightApp() {
                 )
             }
         ) { innerPadding ->
-            NavHost(
-                navController,
-                startDestination = Screen.Dumpsys.route,
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable(Screen.Dumpsys.route) { DumpsysScreen() }
-                composable(Screen.Logcat.route) { LogcatScreen() }
-                composable(Screen.GetProp.route) { GetPropScreen() }
-            }
+            NavGraph(
+                navController = navController,
+                modifier = Modifier.padding(innerPadding),
+                onServiceClick = { serviceName ->
+                    navController.navigate(Screen.DumpsysDetails.createRoute(serviceName))
+                }
+            )
         }
     }
 }

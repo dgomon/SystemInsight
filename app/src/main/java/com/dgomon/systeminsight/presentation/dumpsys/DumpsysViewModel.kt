@@ -15,16 +15,19 @@ class DumpsysViewModel @Inject constructor(
     private val executor: ShellCommandExecutor
 ) : ViewModel() {
 
-    private val _lines = MutableStateFlow<List<String>>(emptyList())
-    val lines: StateFlow<List<String>> = _lines
+    private val _services = MutableStateFlow<List<String>>(emptyList())
+    val services: StateFlow<List<String>> = _services
 
     init {
-        dumpsys()
+        loadServices()
     }
 
-    private fun dumpsys() {
+    private fun loadServices() {
         viewModelScope.launch(Dispatchers.IO) {
-            _lines.value = executor.runCommand("dumpsys battery")
+            _services.value = executor.runCommand("dumpsys -l")
+                .dropWhile { it.isBlank() || it.startsWith("Currently running services:") }
+                .map (String::trim)
+                .filter (String::isNotEmpty)
         }
     }
 }
