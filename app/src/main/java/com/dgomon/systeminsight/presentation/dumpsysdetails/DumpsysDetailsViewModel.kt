@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +22,11 @@ class DumpsysDetailsViewModel @Inject constructor(
     private val _serviceOutput = MutableStateFlow<List<String>>(emptyList())
     val serviceOutput: StateFlow<List<String>> = _serviceOutput
 
-    private val serviceName: String = checkNotNull(savedStateHandle["serviceName"])
+
+    private val serviceName = URLDecoder.decode(
+        checkNotNull(savedStateHandle["serviceName"]),
+        StandardCharsets.UTF_8.toString()
+    )
 
     init {
         loadServiceDetail()
