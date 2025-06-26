@@ -24,12 +24,12 @@ class LogcatViewModel @Inject constructor(
 
     private fun startLogcat() {
         viewModelScope.launch(Dispatchers.IO) {
-            _logLines.value = executor.runCommand("su -c logcat")
+            _logLines.value = executor.runCommand("logcat")
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        Runtime.getRuntime().exec("su -c killall logcat")
+        Runtime.getRuntime().exec("killall logcat")
     }
 }
