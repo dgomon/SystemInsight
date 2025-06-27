@@ -4,6 +4,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 sealed class Screen(val title: String, val route: String) {
+    object PrivilegedControl : Screen("PrivilegedControl", "privilegedControl")
     object Logcat : Screen("Logcat", "logcat")
     object GetProp : Screen("GetProp", "getprop")
     object Dumpsys : Screen("Dympsys", "dumpsys")

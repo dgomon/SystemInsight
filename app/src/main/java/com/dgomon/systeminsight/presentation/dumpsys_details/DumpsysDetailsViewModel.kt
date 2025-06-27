@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.presentation.dumpsysdetails
+package com.dgomon.systeminsight.presentation.dumpsys_details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -21,7 +21,6 @@ class DumpsysDetailsViewModel @Inject constructor(
 
     private val _serviceOutput = MutableStateFlow<List<String>>(emptyList())
     val serviceOutput: StateFlow<List<String>> = _serviceOutput
-
 
     private val serviceName = URLDecoder.decode(
         checkNotNull(savedStateHandle["serviceName"]),

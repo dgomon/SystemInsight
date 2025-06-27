@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.presentation.dumpsysdetails
+package com.dgomon.systeminsight.presentation.dumpsys_details
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

@@ -29,7 +29,7 @@ fun AppNavHost() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val items = listOf(Screen.Dumpsys, Screen.Logcat, Screen.GetProp)
+    val items = listOf(Screen.PrivilegedControl, Screen.Dumpsys, Screen.Logcat, Screen.GetProp)
 
     ModalNavigationDrawer(
         drawerState = drawerState,

@@ -7,19 +7,21 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.dgomon.systeminsight.presentation.dumpsysdetails.DumpsysDetailsScreen
+import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
+import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
 
 @Composable
 fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier,
              onServiceClick: (String) -> Unit) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Dumpsys.route,
+        startDestination = Screen.PrivilegedControl.route,
         modifier = modifier
     ) {
+        composable(Screen.PrivilegedControl.route) { PrivilegeControlScreen() }
         composable(Screen.Dumpsys.route) { DumpsysScreen(onServiceClick = onServiceClick) }
         composable(
             route = Screen.DumpsysDetails.route,
