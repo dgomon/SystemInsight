@@ -11,15 +11,17 @@ import com.dgomon.systeminsight.presentation.dumpsysdetails.DumpsysDetailsScreen
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
+import com.dgomon.systeminsight.presentation.shizuku.ShizukuScreen
 
 @Composable
 fun NavGraph(navController: NavHostController, modifier: Modifier = Modifier,
              onServiceClick: (String) -> Unit) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Dumpsys.route,
+        startDestination = Screen.Shizuku.route,
         modifier = modifier
     ) {
+        composable(Screen.Shizuku.route) { ShizukuScreen() }
         composable(Screen.Dumpsys.route) { DumpsysScreen(onServiceClick = onServiceClick) }
         composable(
             route = Screen.DumpsysDetails.route,

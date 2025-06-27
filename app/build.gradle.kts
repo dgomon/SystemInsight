@@ -18,6 +18,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "APPLICATION_ID", "\"${applicationId}\"")
     }
 
     buildTypes {
@@ -38,6 +40,8 @@ android {
     }
     buildFeatures {
         compose = true
+        aidl = true
+        buildConfig = true
     }
 }
 
@@ -51,8 +55,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material3)
 
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
 
     implementation(libs.ui)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
