@@ -9,6 +9,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.dgomon.systeminsight.BuildConfig
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Disconnected
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Checking
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Connected
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Dead
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.NoPermission
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Unsupported
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Denied
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Error
 import com.dgomon.systeminsight.service.shizuku.IPrivilegedCommandService
 import com.dgomon.systeminsight.service.shizuku.PrivilegedCommandService
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,30 +37,38 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShizukuViewModel @Inject constructor() : ViewModel() {
-    private val _status = MutableStateFlow("Checking Shizuku...")
-    val status: StateFlow<String> = _status.asStateFlow()
+    private val _status = MutableStateFlow(Disconnected)
+    val status: StateFlow<ShizukuStatus> = _status.asStateFlow()
+
+    private var privilegedCommandService: IPrivilegedCommandService? = null
 
     private val onRequestPermissionResultListener = Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
         Log.d(TAG, "Request permission result: $requestCode, $grantResult")
-        _status.value = "Request permission result: $requestCode, $grantResult"
+        if (requestCode == CODE_BIND_SERVICE) {
+            if (grantResult == PERMISSION_GRANTED) {
+                _status.value = Connected
+            } else {
+                _status.value = Denied
+            }
+        }
     }
 
     private val onBinderReceivedListener = OnBinderReceivedListener {
         Log.d(TAG, "Binder received")
         if (isPreV11()) {
-            _status.value = "Shizuku pre-v11 is not supported"
+            _status.value = Unsupported
         } else {
-            _status.value = "Binder received"
+            _status.value = Checking
         }
     }
 
     private val onBinderDeadListener = OnBinderDeadListener {
         Log.d(TAG, "Binder dead")
-        _status.value = "Binder dead"
+        _status.value = Dead
     }
 
     init {
-        _status.value = ShizukuStatus.NOT_CONNECTED.toString()
+        _status.value = ShizukuStatus.Disconnected
         Shizuku.addBinderReceivedListenerSticky(onBinderReceivedListener)
         Shizuku.addBinderDeadListener(onBinderDeadListener)
         Shizuku.addRequestPermissionResultListener(onRequestPermissionResultListener)
@@ -65,44 +81,38 @@ class ShizukuViewModel @Inject constructor() : ViewModel() {
 
         try {
             if (checkSelfPermission() == PERMISSION_GRANTED) {
-                _status.value = "permission granted"
                 return true
             } else if (shouldShowRequestPermissionRationale()) {
-                _status.value = "User denied permission (shouldShowRequestPermissionRationale=true)"
+                _status.value = NoPermission
                 return false
             } else {
-                _status.value = "requesting permission"
+                _status.value = ShizukuStatus.RequestingPermission
                 requestPermission(requestCode)
                 return false
             }
         } catch (e: Throwable) {
-            _status.value = e.toString()
+            Log.e(TAG, "Failed to check permission", e)
+            _status.value = Error
             return false
         }
     }
 
     private val userServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName, binder: IBinder?) {
-            val result = buildString {
-                appendLine("Service connected: ${componentName.className}")
-                if (binder?.pingBinder() == true) {
-                    val service = IPrivilegedCommandService.Stub.asInterface(binder)
-                    try {
-                        appendLine(service.doSomething())
-                    } catch (e: RemoteException) {
-                        e.printStackTrace()
-                        appendLine(Log.getStackTraceString(e))
-                    }
-                } else {
-                    appendLine("Invalid binder received for $componentName")
-                }
-            }.trim()
-
-            _status.value = result
+            Log.d(TAG, "onServiceConnected: $componentName $binder")
+            if (binder?.pingBinder() == true) {
+                privilegedCommandService = IPrivilegedCommandService.Stub.asInterface(binder)
+                _status.value = Connected
+            } else {
+                Log.e(TAG, "Service connected but ping failed")
+            }
         }
 
         override fun onServiceDisconnected(componentName: ComponentName) {
-            _status.value = "Service disconnected: " + '\n' + componentName.className
+            Log.d(TAG, "Service disconnected: $componentName")
+
+            privilegedCommandService = null
+            _status.value = Disconnected
         }
     }
 
@@ -118,22 +128,38 @@ class ShizukuViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun getBatteryStatus() {
+            privilegedCommandService?.doSomething()
+            val result = buildString {
+                try {
+                    appendLine(privilegedCommandService?.doSomething())
+                } catch (e: RemoteException) {
+                    e.printStackTrace()
+                    appendLine(Log.getStackTraceString(e))
+                }
+            }.trim()
+
+            Log.d(TAG, "Get battery status: $result")
+
+    }
+
     private fun bindUserService() {
         val minSupportedVersion = 10
 
         if (Shizuku.getVersion() < minSupportedVersion) {
-            _status.value = "Shizuku API $minSupportedVersion+ required"
+            Log.e(TAG, "Unsupported version of Shizuku: ${Shizuku.getVersion()}")
             return
         }
 
-        _status.value = "Connecting..."
+        _status.value = ShizukuStatus.Connecting
         runCatching {
             Shizuku.bindUserService(userServiceArgs, userServiceConnection)
         }.onFailure { throwable ->
-            Log.e("Shizuku", "Failed to bind service", throwable)
-            _status.value = throwable.localizedMessage ?: "Unknown error"
+            Log.e(TAG, "Failed to bind service", throwable)
+            _status.value = Error
         }.onSuccess {
-            _status.value = "Connected!"
+            Log.d(TAG, "Service bound")
+            _status.value = ShizukuStatus.Bound
         }
     }
 

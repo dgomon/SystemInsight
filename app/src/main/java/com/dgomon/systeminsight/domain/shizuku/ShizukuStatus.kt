@@ -1,11 +1,15 @@
 package com.dgomon.systeminsight.domain.shizuku
 
 enum class ShizukuStatus {
-    CHECKING,
-    CONNECTED,
-    NOT_CONNECTED,
-    NO_PERMISSION,
-    UNSUPPORTED,
-    DENIED,
-    ERROR
+    Disconnected,
+    Checking,
+    Bound,
+    Connecting,
+    Connected,
+    NoPermission,
+    RequestingPermission,
+    Unsupported,
+    Denied,
+    Dead,
+    Error
 }

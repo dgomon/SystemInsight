@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus
 
 @Preview
 @Composable
@@ -31,23 +32,33 @@ fun ShizukuScreen(viewModel: ShizukuViewModel = hiltViewModel()) {
             .padding(16.dp)
     ) {
         Column {
-            Button(onClick = {
-                viewModel.bindPrivilegedService()
-            }) {
+            Button(
+                onClick = { viewModel.bindPrivilegedService() },
+                enabled = status != ShizukuStatus.Connected
+            ) {
                 Text(text = "Connect")
             }
 
             Button(onClick = {
-                viewModel.unbindPrivilegedService()
-            }) {
+                viewModel.unbindPrivilegedService() },
+                enabled = status == ShizukuStatus.Connected
+            ) {
                 Text(text = "Disconnect")
             }
+
+            Button(onClick = {
+                viewModel.getBatteryStatus() },
+                enabled = status == ShizukuStatus.Connected
+            ) {
+                Text(text = "Get battery status")
+            }
+
         }
 
         val scrollState = rememberScrollState()
 
         Text(
-            text = status,
+            text = status.toString(),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .align(Alignment.BottomStart)
