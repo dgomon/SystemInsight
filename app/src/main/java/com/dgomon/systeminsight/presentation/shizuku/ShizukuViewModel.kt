@@ -129,18 +129,16 @@ class ShizukuViewModel @Inject constructor() : ViewModel() {
     }
 
     fun getBatteryStatus() {
-            privilegedCommandService?.doSomething()
-            val result = buildString {
-                try {
-                    appendLine(privilegedCommandService?.doSomething())
-                } catch (e: RemoteException) {
-                    e.printStackTrace()
-                    appendLine(Log.getStackTraceString(e))
-                }
-            }.trim()
+        val result = buildString {
+            try {
+                appendLine(privilegedCommandService?.doSomething())
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+                appendLine(Log.getStackTraceString(e))
+            }
+        }.trim()
 
-            Log.d(TAG, "Get battery status: $result")
-
+        Log.d(TAG, "Get battery status: $result")
     }
 
     private fun bindUserService() {
