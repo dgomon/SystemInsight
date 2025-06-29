@@ -5,64 +5,47 @@ import android.os.RemoteException
 import android.util.Log
 import androidx.annotation.Keep
 import java.io.BufferedReader
-import java.io.IOException
 import java.io.InputStreamReader
+import kotlin.system.exitProcess
 
 class PrivilegedCommandService : IPrivilegedCommandService.Stub {
-    /**
-     * Constructor is required.
-     */
-    constructor() {
-        Log.i("UserService", "constructor")
-    }
 
-    /**
-     * Constructor with Context. This is only available from Shizuku API v13.
-     *
-     *
-     * This method need to be annotated with [Keep] to prevent ProGuard from removing it.
-     *
-     * @param context Context created with createPackageContextAsUser
-     * @see [code used to create the instance of this class](https://github.com/RikkaApps/Shizuku-API/blob/672f5efd4b33c2441dbf609772627e63417587ac/server-shared/src/main/java/rikka/shizuku/server/UserService.java.L66)
-     */
     @Keep
-    constructor(context: Context) {
-        Log.i("UserService", "constructor with Context: context=" + context.toString())
-    }
+    @SuppressWarnings("unused")
+    constructor() {}
 
-    /**
-     * Reserved destroy method
-     */
-    public override fun destroy() {
+    @Keep
+    @SuppressWarnings("unused")
+    constructor(context: Context) {}
+
+    override fun destroy() {
         Log.i("UserService", "destroy")
-        System.exit(0)
+        exitProcess(0)
     }
 
-    public override fun exit() {
+    override fun exit() {
         destroy()
     }
 
     @Throws(RemoteException::class)
-    public override fun doSomething(): String {
-//        return "pid=" + Os.getpid() + ", uid=" + Os.getuid() + ", " + stringFromJNI();
-
+    override fun doSomething(): String {
         val result = StringBuilder()
-        try {
+        runCatching {
             val process = Runtime.getRuntime().exec("dumpsys battery")
+
             val reader = BufferedReader(
-                InputStreamReader(process.getInputStream())
+                InputStreamReader(process.inputStream)
             )
 
-            var line: String?
-            while ((reader.readLine().also { line = it }) != null) {
-                result.append(line).append('\n')
+            reader.useLines { lines ->
+                lines.forEach { line ->
+                    result.append(line).append('\n')
+                }
             }
 
             process.waitFor()
-        } catch (e: IOException) {
-            result.append("Error: ").append(e.message)
-        } catch (e: InterruptedException) {
-            result.append("Error: ").append(e.message)
+        }.onFailure { throwable ->
+            result.append("Error: ").append(throwable.message)
         }
 
         return result.toString()
