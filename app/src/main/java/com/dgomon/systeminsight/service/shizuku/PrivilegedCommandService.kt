@@ -28,10 +28,10 @@ class PrivilegedCommandService : IPrivilegedCommandService.Stub {
     }
 
     @Throws(RemoteException::class)
-    override fun doSomething(): String {
+    override fun runCommand(cmd: String): String {
         val result = StringBuilder()
         runCatching {
-            val process = Runtime.getRuntime().exec("dumpsys battery")
+            val process = Runtime.getRuntime().exec(cmd)
 
             val reader = BufferedReader(
                 InputStreamReader(process.inputStream)

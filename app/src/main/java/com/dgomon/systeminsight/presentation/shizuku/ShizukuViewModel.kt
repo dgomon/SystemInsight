@@ -131,7 +131,7 @@ class ShizukuViewModel @Inject constructor() : ViewModel() {
     fun getBatteryStatus() {
         val result = buildString {
             try {
-                appendLine(privilegedCommandService?.doSomething())
+                appendLine(privilegedCommandService?.runCommand("dumpsys battery"))
             } catch (e: RemoteException) {
                 e.printStackTrace()
                 appendLine(Log.getStackTraceString(e))
