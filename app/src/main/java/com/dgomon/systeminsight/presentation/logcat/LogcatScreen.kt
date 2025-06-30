@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun LogcatScreen(viewModel: LogcatViewModel = hiltViewModel()) {
     val logs by viewModel.logs.collectAsState(initial = "")
+    val isConnected by viewModel.isConnected.collectAsState()
 
     Box(
         modifier = Modifier
@@ -32,15 +33,17 @@ fun LogcatScreen(viewModel: LogcatViewModel = hiltViewModel()) {
     ) {
 
         Row {
-            Button(onClick = {
-                viewModel.startLogging()
-            }) {
+            Button(
+                onClick = { viewModel.startLogging() },
+                enabled = isConnected
+            ) {
                 Text(text = "Start")
             }
 
-            Button(onClick = {
-                viewModel.stopLogging()
-            }) {
+            Button(
+                onClick = { viewModel.stopLogging() },
+                enabled = isConnected
+            ) {
                 Text(text = "Stop")
             }
         }

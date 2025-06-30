@@ -9,6 +9,7 @@ import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,6 +20,8 @@ class LogcatViewModel @Inject constructor(
 
     private val logChannel = MutableSharedFlow<String>(replay = 0)
     val logs: SharedFlow<String> = logChannel.asSharedFlow()
+
+    val isConnected: StateFlow<Boolean> = serviceConnectionProvider.isConnected
 
     private val logCallback = object : ILogCallback.Stub() {
         override fun onLogLine(line: String) {
