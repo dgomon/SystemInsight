@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun DumpsysScreen(
+    modifier: Modifier = Modifier,
     viewModel: DumpsysViewModel = hiltViewModel(),
     onServiceClick: (String) -> Unit
 ) {

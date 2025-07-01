@@ -4,12 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Preview
 @Composable
-fun GetPropScreen(viewModel: GetPropViewModel = hiltViewModel()) {
+fun GetPropScreen(modifier: Modifier, viewModel: GetPropViewModel = hiltViewModel()) {
     val props by viewModel.props.collectAsState()
 
     // Convert to tree

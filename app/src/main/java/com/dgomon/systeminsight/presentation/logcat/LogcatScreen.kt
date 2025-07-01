@@ -22,12 +22,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Preview
 @Composable
-fun LogcatScreen(viewModel: LogcatViewModel = hiltViewModel()) {
+fun LogcatScreen(modifier: Modifier = Modifier, viewModel: LogcatViewModel = hiltViewModel()) {
     val logs by viewModel.logs.collectAsState(initial = "")
     val isConnected by viewModel.isConnected.collectAsState()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {

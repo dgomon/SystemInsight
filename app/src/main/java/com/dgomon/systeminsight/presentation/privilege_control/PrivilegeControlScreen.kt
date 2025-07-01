@@ -23,11 +23,11 @@ import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus
 
 @Preview
 @Composable
-fun PrivilegeControlScreen(viewModel: PrivilegeControlViewModel = hiltViewModel()) {
+fun PrivilegeControlScreen(modifier: Modifier = Modifier, viewModel: PrivilegeControlViewModel = hiltViewModel()) {
     val isConnected by viewModel.isConnected.collectAsState()
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
