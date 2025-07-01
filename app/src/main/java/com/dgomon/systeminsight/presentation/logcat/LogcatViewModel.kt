@@ -1,7 +1,10 @@
 package com.dgomon.systeminsight.presentation.logcat
 
+import android.content.Context
+import android.net.Uri
 import android.os.RemoteException
 import android.util.Log
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.service.ILogCallback
@@ -14,11 +17,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class LogcatViewModel @Inject constructor(
-    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider) : ViewModel() {
+class LogcatViewModel @Inject constructor(private val serviceConnectionProvider: PrivilegedServiceConnectionProvider) : ViewModel() {
+
+    companion object {
+        private const val LOG_BUFFER_CAPACITY = 1000
+    }
+
+    private val logBuffer = ArrayDeque<String>(LOG_BUFFER_CAPACITY)
+    private val logMutex = Mutex()
 
     private val logChannel = MutableSharedFlow<String>(replay = 0)
     val logs: SharedFlow<String> = logChannel.asSharedFlow()
@@ -36,6 +48,7 @@ class LogcatViewModel @Inject constructor(
             if (!_isPaused.value) {
                 viewModelScope.launch {
                     logChannel.emit(line)
+                    appendToBuffer(line)
                 }
             }
         }
@@ -65,6 +78,26 @@ class LogcatViewModel @Inject constructor(
 
     fun resumeCapture() {
         _isPaused.value = false
+    }
+
+    fun exportLogsToFile(context: Context): Uri {
+        val logFile = File(context.cacheDir, "logcat.txt")
+        logFile.writeText(logBuffer.toList().joinToString("\n"))
+
+        return FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            logFile
+        )
+    }
+
+    private suspend fun appendToBuffer(line: String) {
+        logMutex.withLock {
+            if (logBuffer.size >= LOG_BUFFER_CAPACITY) {
+                logBuffer.removeFirst()
+            }
+            logBuffer.addLast(line)
+        }
     }
 
     override fun onCleared() {
