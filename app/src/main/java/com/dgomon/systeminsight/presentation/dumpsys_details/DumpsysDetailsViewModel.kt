@@ -1,5 +1,6 @@
 package com.dgomon.systeminsight.presentation.dumpsys_details
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +20,10 @@ class DumpsysDetailsViewModel @Inject constructor(
     private val executor: ShellCommandExecutor
 ) : ViewModel() {
 
+    companion object {
+        private const val TAG = "DumpsysDetailsViewModel"
+    }
+
     private val _serviceOutput = MutableStateFlow<List<String>>(emptyList())
     val serviceOutput: StateFlow<List<String>> = _serviceOutput
 
@@ -35,6 +40,7 @@ class DumpsysDetailsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _serviceOutput.value = listOf("Loading $serviceName...")
             val output = executor.runCommand("dumpsys $serviceName")
+            Log.d(TAG, "loadServiceDetail: $output")
             _serviceOutput.value = output
         }
     }

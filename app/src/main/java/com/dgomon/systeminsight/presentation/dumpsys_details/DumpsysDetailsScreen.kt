@@ -15,6 +15,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun DumpsysDetailsScreen(
+    modifier: Modifier = Modifier,
+    serviceName: String,
     viewModel: DumpsysDetailsViewModel = hiltViewModel()
 ) {
     val output by viewModel.serviceOutput.collectAsState()

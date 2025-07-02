@@ -1,5 +1,6 @@
 package com.dgomon.systeminsight.ui
 
+import android.net.Uri
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -22,11 +23,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
+import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
@@ -54,18 +58,34 @@ fun AppNavHost(
     onServiceClick: (String) -> Unit
 ) {
     NavHost(
-        navController,
-        startDestination = startDestination.route
+        navController = navController,
+        startDestination = startDestination.route,
+        modifier = modifier
     ) {
+        // Static routes from Destination enum
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
                     Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(modifier)
                     Destination.LOGCAT -> LogcatScreen(modifier)
                     Destination.GETPROP -> GetPropScreen(modifier)
-                    Destination.DUMPSYS -> DumpsysScreen(modifier, onServiceClick = onServiceClick)
+                    Destination.DUMPSYS -> DumpsysScreen(
+                        modifier = modifier,
+                        onServiceClick = { serviceName ->
+                            navController.navigate("dumpsysDetails/${Uri.encode(serviceName)}")
+                        }
+                    )
                 }
             }
+        }
+
+        // Dynamic route for dumpsys details
+        composable(
+            route = "dumpsysDetails/{serviceName}",
+            arguments = listOf(navArgument("serviceName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
+            DumpsysDetailsScreen(serviceName = serviceName, modifier = modifier)
         }
     }
 }
