@@ -1,14 +1,14 @@
 package com.dgomon.systeminsight.presentation.getProp
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 
-@Preview
 @Composable
 fun GetPropScreen(
     modifier: Modifier,
@@ -17,9 +17,16 @@ fun GetPropScreen(
     val props by viewModel.props.collectAsState()
 
     // Convert to tree
-    val tree = remember(props) { buildTree(props) }
+    val root = remember(props) { buildTree(props) }
+    val nodes = root.children
 
-    TreeScreen(treeRoot = tree, modifier = modifier)
+    LazyColumn {
+        item {
+            Column {
+                nodes.forEach { TreeNodeView(it) }
+            }
+        }
+    }
 }
 
 fun buildTree(entries: List<PropEntry>, delimiter: Char = '.') : TreeNode {
