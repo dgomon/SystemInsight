@@ -33,7 +33,9 @@ fun DumpsysScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
-                    .clickable { onServiceClick(service) }
+                    .clickable {
+                        onServiceClick(service)
+                    }
                     .padding(horizontal = 8.dp),
                 contentAlignment = Alignment.CenterStart
             ) {

@@ -24,6 +24,7 @@ class DumpsysViewModel @Inject constructor(
             ?.runCommand("dumpsys -l")
             ?.lineSequence()
             ?.filter { it.isNotBlank() }
+            ?.map { it.trim() }
             ?.toList()
             ?: emptyList()
     }

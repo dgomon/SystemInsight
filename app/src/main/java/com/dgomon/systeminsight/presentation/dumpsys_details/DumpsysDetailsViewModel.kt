@@ -1,10 +1,9 @@
 package com.dgomon.systeminsight.presentation.dumpsys_details
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dgomon.systeminsight.data.shell.ShellCommandExecutor
+import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,12 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DumpsysDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val executor: ShellCommandExecutor
+    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider,
 ) : ViewModel() {
-
-    companion object {
-        private const val TAG = "DumpsysDetailsViewModel"
-    }
 
     private val _serviceOutput = MutableStateFlow<List<String>>(emptyList())
     val serviceOutput: StateFlow<List<String>> = _serviceOutput
@@ -39,9 +34,11 @@ class DumpsysDetailsViewModel @Inject constructor(
     private fun loadServiceDetail() {
         viewModelScope.launch(Dispatchers.IO) {
             _serviceOutput.value = listOf("Loading $serviceName...")
-            val output = executor.runCommand("dumpsys $serviceName")
-            Log.d(TAG, "loadServiceDetail: $output")
-            _serviceOutput.value = output
+
+            val output = serviceConnectionProvider.getService()
+                ?.runCommand("dumpsys $serviceName")
+
+            _serviceOutput.value = listOf(output ?: "")
         }
     }
 }
