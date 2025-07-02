@@ -10,13 +10,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Preview
 @Composable
-fun GetPropScreen(modifier: Modifier, viewModel: GetPropViewModel = hiltViewModel()) {
+fun GetPropScreen(
+    modifier: Modifier,
+    viewModel: GetPropViewModel = hiltViewModel()
+) {
     val props by viewModel.props.collectAsState()
 
     // Convert to tree
     val tree = remember(props) { buildTree(props) }
 
-    TreeScreen(treeRoot = tree)
+    TreeScreen(treeRoot = tree, modifier = modifier)
 }
 
 fun buildTree(entries: List<PropEntry>, delimiter: Char = '.') : TreeNode {

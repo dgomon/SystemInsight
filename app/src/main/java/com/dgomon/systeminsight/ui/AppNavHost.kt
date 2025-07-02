@@ -74,7 +74,7 @@ fun AppNavHost(
 @Composable
 fun MainNavigationBar(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    val startDestination = Destination.PRIVILEGE_CONTROL
+    val startDestination = Destination.GETPROP
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
     Scaffold(

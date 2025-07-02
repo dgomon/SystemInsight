@@ -11,12 +11,14 @@ espressoCore = "3.6.1"
 kotlinxCoroutinesCore = "1.10.2"
 activityCompose = "1.10.1"
 lifecycleViewmodelCompose = "..."
+materialIconsExtended = "1.7.8"
 navigationCompose = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version = "2.56.2" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
