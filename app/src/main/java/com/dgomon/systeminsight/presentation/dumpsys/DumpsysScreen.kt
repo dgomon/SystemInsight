@@ -3,6 +3,7 @@ package com.dgomon.systeminsight.presentation.dumpsys
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,9 +30,10 @@ fun DumpsysScreen(
                 text = service,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(48.dp)
                     .clickable { onServiceClick(service) }
                     .padding(8.dp),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }
