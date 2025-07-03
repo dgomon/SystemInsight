@@ -1,7 +1,15 @@
 package com.dgomon.systeminsight.presentation.getProp
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -9,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.ui.NavigationViewModel
@@ -19,7 +28,9 @@ fun GetPropScreen(
     navigationViewModel: NavigationViewModel,
     getPropViewModel: GetPropViewModel = hiltViewModel(),
 ) {
-    val props by getPropViewModel.props.collectAsState()
+    val props by getPropViewModel.filteredProps.collectAsState()
+    val query by getPropViewModel.query.collectAsState()
+
     val context = LocalContext.current
 
     // Convert to tree
@@ -29,11 +40,29 @@ fun GetPropScreen(
     LaunchedEffect(Unit) {
         navigationViewModel.setTitle(context.getString(R.string.title_properties))
     }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
 
-    LazyColumn {
-        item {
-            Column {
-                nodes.forEach { TreeNodeView(it) }
+        OutlinedTextField(
+            value = query,
+            onValueChange = getPropViewModel::setQuery,
+            label = { Text("Search service") },
+            singleLine = true,
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        )
+
+
+        LazyColumn {
+            item {
+                Column {
+                    nodes.forEach { TreeNodeView(it) }
+                }
             }
         }
     }

@@ -15,11 +15,10 @@ import javax.inject.Inject
 class DumpsysViewModel @Inject constructor(
     private val serviceConnectionProvider: PrivilegedServiceConnectionProvider
 ) : ViewModel() {
-
-    private val _services = MutableStateFlow<List<String>>(emptyList())
-
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
+
+    private val _services = MutableStateFlow<List<String>>(emptyList())
 
     // Combine query and services to emit filtered results
     val filteredServices: StateFlow<List<String>> = combine(_query, _services) { query, services ->

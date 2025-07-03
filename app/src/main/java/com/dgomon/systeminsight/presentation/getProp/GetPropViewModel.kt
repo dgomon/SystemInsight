@@ -6,7 +6,10 @@ import com.dgomon.systeminsight.data.shell.ShellCommandExecutor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,9 +17,23 @@ import javax.inject.Inject
 class GetPropViewModel @Inject constructor(
     private val executor: ShellCommandExecutor
 ) : ViewModel() {
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query
 
+    // Combine query and props to emit filtered results
     private val _props = MutableStateFlow<List<PropEntry>>(emptyList())
-    val props: StateFlow<List<PropEntry>> = _props
+    val filteredProps: StateFlow<List<PropEntry>> = combine(_query, _props) { query, props ->
+        if (query.isBlank()) props
+        else props.filter { it.key.contains(query, ignoreCase = true) }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    fun setQuery(newQuery: String) {
+        _query.value = newQuery
+    }
 
     init {
         loadProps()
