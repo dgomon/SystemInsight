@@ -21,9 +21,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
 import com.dgomon.systeminsight.ui.NavigationViewModel
 import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
@@ -62,7 +64,7 @@ fun DumpsysScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = dumpsysViewModel::setQuery,
-                label = { Text("Search service") },
+                label = { Text(stringResource(R.string.search_service)) },
                 singleLine = true,
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 modifier = Modifier
@@ -73,11 +75,11 @@ fun DumpsysScreen(
             if (services.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "Loading services...",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = stringResource(R.string.loading_services),
+                        style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             } else {

@@ -4,4 +4,7 @@
     <string name="title_logcat">Logcat</string>
     <string name="title_privilege_control">Privilege Control</string>
     <string name="title_properties">Properties</string>
+    <string name="dumpsys_no_output_message">No output returned from the system for this service.</string>
+    <string name="loading_services">Loading services…</string>
+    <string name="search_service">Search service</string>
 </resources>
