@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
+import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
 
 @Composable
 fun DumpsysScreen(
@@ -37,19 +38,11 @@ fun DumpsysScreen(
         }
     }
 
-    when {
-        !isConnected -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Waiting for privileged connection...",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-        services.isEmpty() -> {
+    RequirePrivilegedConnection(
+        isConnected = isConnected,
+        modifier = modifier
+    ) {
+        if (services.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -58,17 +51,15 @@ fun DumpsysScreen(
                     text = "Loading services...",
                     style = MaterialTheme.typography.bodyMedium
                 )
-            }        }
-        else -> {
+            }
+        } else {
             LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 items(services) { service ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(48.dp)
-                            .clickable {
-                                onServiceClick(service)
-                            }
+                            .clickable { onServiceClick(service) }
                             .padding(horizontal = 8.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
