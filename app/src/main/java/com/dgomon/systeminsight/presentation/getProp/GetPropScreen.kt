@@ -3,22 +3,32 @@ package com.dgomon.systeminsight.presentation.getProp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.ui.NavigationViewModel
 
 @Composable
 fun GetPropScreen(
     modifier: Modifier,
-    viewModel: GetPropViewModel = hiltViewModel()
+    navigationViewModel: NavigationViewModel,
+    getPropViewModel: GetPropViewModel = hiltViewModel(),
 ) {
-    val props by viewModel.props.collectAsState()
+    val props by getPropViewModel.props.collectAsState()
+    val context = LocalContext.current
 
     // Convert to tree
     val root = remember(props) { buildTree(props) }
     val nodes = root.children
+
+    LaunchedEffect(Unit) {
+        navigationViewModel.setTitle(context.getString(R.string.title_properties))
+    }
 
     LazyColumn {
         item {

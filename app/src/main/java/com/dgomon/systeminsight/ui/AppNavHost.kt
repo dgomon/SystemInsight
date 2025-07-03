@@ -2,11 +2,8 @@ package com.dgomon.systeminsight.ui
 
 import android.net.Uri
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
@@ -14,14 +11,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -34,7 +32,6 @@ import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScree
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
-import kotlinx.coroutines.launch
 
 
 enum class Destination(
@@ -55,7 +52,7 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: Destination,
     modifier: Modifier = Modifier,
-    onServiceClick: (String) -> Unit
+    navigationViewModel: NavigationViewModel = hiltViewModel()
 ) {
     NavHost(
         navController = navController,
@@ -66,14 +63,15 @@ fun AppNavHost(
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
-                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(modifier)
-                    Destination.LOGCAT -> LogcatScreen(modifier)
-                    Destination.GETPROP -> GetPropScreen(modifier)
+                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(modifier, navigationViewModel = navigationViewModel)
+                    Destination.LOGCAT -> LogcatScreen(modifier, navigationViewModel = navigationViewModel)
+                    Destination.GETPROP -> GetPropScreen(modifier, navigationViewModel = navigationViewModel)
                     Destination.DUMPSYS -> DumpsysScreen(
                         modifier = modifier,
                         onServiceClick = { serviceName ->
                             navController.navigate("dumpsysDetails/${Uri.encode(serviceName)}")
-                        }
+                        },
+                        navigationViewModel = navigationViewModel
                     )
                 }
             }
@@ -97,11 +95,14 @@ fun MainNavigationBar(modifier: Modifier = Modifier) {
     val startDestination = Destination.DUMPSYS
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
+    val navigationViewModel: NavigationViewModel = hiltViewModel()
+    val title by navigationViewModel.title.collectAsState()
+
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(id = R.string.app_name)) },
+                title = { Text(title) },
             )
         },
         bottomBar = {
@@ -128,7 +129,8 @@ fun MainNavigationBar(modifier: Modifier = Modifier) {
         AppNavHost(navController,
             startDestination,
             Modifier.padding(contentPadding),
-            onServiceClick = { serviceName -> {}})
+            navigationViewModel = navigationViewModel
+        )
     }
 }
 

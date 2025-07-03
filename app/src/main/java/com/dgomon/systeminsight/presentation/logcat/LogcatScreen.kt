@@ -13,6 +13,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,20 +22,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.ui.NavigationViewModel
 import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
 
 @Preview
 @Composable
 fun LogcatScreen(
     modifier: Modifier = Modifier,
-    viewModel: LogcatViewModel = hiltViewModel()
+    navigationViewModel: NavigationViewModel,
+    logcatViewModel: LogcatViewModel = hiltViewModel()
 ) {
-    val logs by viewModel.logs.collectAsState(initial = "")
-    val isConnected by viewModel.isConnected.collectAsState()
-    val isLogging by viewModel.isCapturing.collectAsState()
-    val isPaused by viewModel.isPaused.collectAsState()
+    val logs by logcatViewModel.logs.collectAsState(initial = "")
+    val isConnected by logcatViewModel.isConnected.collectAsState()
+    val isLogging by logcatViewModel.isCapturing.collectAsState()
+    val isPaused by logcatViewModel.isPaused.collectAsState()
 
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        navigationViewModel.setTitle(context.getString(R.string.title_logcat))
+    }
 
     RequirePrivilegedConnection(isConnected = isConnected, modifier = modifier) {
         Box(
@@ -44,28 +52,28 @@ fun LogcatScreen(
         ) {
             Column {
                 Button(
-                    onClick = { viewModel.startCapture() },
+                    onClick = { logcatViewModel.startCapture() },
                     enabled = !isLogging
                 ) {
                     Text(text = "Start")
                 }
 
                 Button(
-                    onClick = { viewModel.stopCapture() },
+                    onClick = { logcatViewModel.stopCapture() },
                     enabled = isLogging
                 ) {
                     Text(text = "Stop")
                 }
 
                 Button(
-                    onClick = { viewModel.pauseCapture() },
+                    onClick = { logcatViewModel.pauseCapture() },
                     enabled = isLogging && !isPaused
                 ) {
                     Text(text = "Pause")
                 }
 
                 Button(
-                    onClick = { viewModel.resumeCapture() },
+                    onClick = { logcatViewModel.resumeCapture() },
                     enabled = isLogging && isPaused
                 ) {
                     Text(text = "Resume")
@@ -73,7 +81,7 @@ fun LogcatScreen(
 
                 Button(
                     onClick = {
-                        val uri = viewModel.exportLogsToFile(context)
+                        val uri = logcatViewModel.exportLogsToFile(context)
                         uri.let {
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                 type = "text/plain"

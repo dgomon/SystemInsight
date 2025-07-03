@@ -12,19 +12,31 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus
+import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.ui.NavigationViewModel
 
 @Preview
 @Composable
-fun PrivilegeControlScreen(modifier: Modifier = Modifier, viewModel: PrivilegeControlViewModel = hiltViewModel()) {
-    val isConnected by viewModel.isConnected.collectAsState()
+fun PrivilegeControlScreen(
+    modifier: Modifier = Modifier,
+    navigationViewModel: NavigationViewModel,
+    privilegeControlViewModel: PrivilegeControlViewModel = hiltViewModel(),
+) {
+    val isConnected by privilegeControlViewModel.isConnected.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        navigationViewModel.setTitle(context.getString(R.string.title_privilege_control))
+    }
 
     Box(
         modifier = modifier
@@ -33,14 +45,14 @@ fun PrivilegeControlScreen(modifier: Modifier = Modifier, viewModel: PrivilegeCo
     ) {
         Column {
             Button(
-                onClick = { viewModel.requestPrivileges() },
+                onClick = { privilegeControlViewModel.requestPrivileges() },
                 enabled = !isConnected
             ) {
                 Text(text = "Connect")
             }
 
             Button(onClick = {
-                viewModel.releasePrivileges() },
+                privilegeControlViewModel.releasePrivileges() },
                 enabled = isConnected
             ) {
                 Text(text = "Disconnect")

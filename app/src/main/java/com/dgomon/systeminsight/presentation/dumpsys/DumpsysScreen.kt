@@ -20,17 +20,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
+import com.dgomon.systeminsight.ui.NavigationViewModel
 import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
 
 @Composable
 fun DumpsysScreen(
     modifier: Modifier = Modifier,
+    navigationViewModel: NavigationViewModel,
     privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
     onServiceClick: (String) -> Unit
 ) {
     val services by dumpsysViewModel.services.collectAsState()
     val isConnected by privilegeViewModel.isConnected.collectAsState()
+
+    LaunchedEffect(Unit) {
+        navigationViewModel.setTitle("Dumpsys")
+    }
 
     LaunchedEffect(isConnected) {
         if (isConnected) {
