@@ -15,15 +15,12 @@ class DumpsysViewModel @Inject constructor(
     private val _services = MutableStateFlow<List<String>>(emptyList())
     val services: StateFlow<List<String>> = _services
 
-    init {
-        loadServices()
-    }
-
-    private fun loadServices() {
+    fun loadServices() {
         _services.value = serviceConnectionProvider.getService()
             ?.runCommand("dumpsys -l")
             ?.lineSequence()
             ?.filter { it.isNotBlank() }
+            ?.drop(1) // Skip the "Currently running services" header
             ?.map { it.trim() }
             ?.toList()
             ?: emptyList()

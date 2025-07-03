@@ -150,7 +150,7 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
             _status.value = Error
         }.onSuccess {
             Log.d(TAG, "Service bound")
-            _status.value = Connected
+            _status.value = Bound
         }
     }
 

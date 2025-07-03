@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -18,33 +19,67 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
 
 @Composable
 fun DumpsysScreen(
     modifier: Modifier = Modifier,
-    viewModel: DumpsysViewModel = hiltViewModel(),
+    privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
+    dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
     onServiceClick: (String) -> Unit
 ) {
-    val services by viewModel.services.collectAsState()
+    val services by dumpsysViewModel.services.collectAsState()
+    val isConnected by privilegeViewModel.isConnected.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        items(services) { service ->
+    LaunchedEffect(isConnected) {
+        if (isConnected) {
+            dumpsysViewModel.loadServices()
+        }
+    }
+
+    when {
+        !isConnected -> {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .clickable {
-                        onServiceClick(service)
-                    }
-                    .padding(horizontal = 8.dp),
-                contentAlignment = Alignment.CenterStart
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = service,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    text = "Waiting for privileged connection...",
                     style = MaterialTheme.typography.bodyMedium
                 )
+            }
+        }
+        services.isEmpty() -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Loading services...",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }        }
+        else -> {
+            LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                items(services) { service ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .clickable {
+                                onServiceClick(service)
+                            }
+                            .padding(horizontal = 8.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = service,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
         }
     }
