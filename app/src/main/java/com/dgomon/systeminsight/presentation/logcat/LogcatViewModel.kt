@@ -8,7 +8,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.service.ILogCallback
-import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,9 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class LogcatViewModel @Inject constructor(private val serviceConnectionProvider: PrivilegedServiceConnectionProvider) : ViewModel() {
+class LogcatViewModel @Inject constructor(
+    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider
+) : ViewModel() {
 
     companion object {
         private const val LOG_BUFFER_CAPACITY = 1000

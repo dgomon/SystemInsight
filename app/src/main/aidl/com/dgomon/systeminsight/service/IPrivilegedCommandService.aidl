@@ -8,7 +8,7 @@ interface IPrivilegedCommandService {
 
     void exit() = 1;
 
-    String runCommand(String cmd) = 2;
+    byte[] runCommand(String cmd) = 2;
 
     void startLogging(ILogCallback callback) = 3;
 

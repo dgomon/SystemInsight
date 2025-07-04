@@ -1,5 +1,6 @@
-package com.dgomon.systeminsight.service
+package com.dgomon.systeminsight.core.service
 
+import com.dgomon.systeminsight.service.IPrivilegedCommandService
 import kotlinx.coroutines.flow.StateFlow
 
 

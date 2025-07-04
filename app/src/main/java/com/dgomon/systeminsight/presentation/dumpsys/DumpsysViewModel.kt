@@ -2,7 +2,7 @@ package com.dgomon.systeminsight.presentation.dumpsys
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.core.service.CommandServiceClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DumpsysViewModel @Inject constructor(
-    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider
+    private val commandServiceClient: CommandServiceClient,
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
@@ -35,8 +35,7 @@ class DumpsysViewModel @Inject constructor(
     }
 
     fun loadServices() {
-        _services.value = serviceConnectionProvider.getService()
-            ?.runCommand("dumpsys -l")
+        _services.value = commandServiceClient.runCommand("dumpsys -l")
             ?.lineSequence()
             ?.filter { it.isNotBlank() }
             ?.drop(1) // Skip the "Currently running services" header

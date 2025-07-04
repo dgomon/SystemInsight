@@ -3,7 +3,7 @@ package com.dgomon.systeminsight
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

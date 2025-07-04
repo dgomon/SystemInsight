@@ -1,7 +1,7 @@
 package com.dgomon.systeminsight.di
 
 import com.dgomon.systeminsight.presentation.shizuku.ShizukuServiceManager
-import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

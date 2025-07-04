@@ -1,16 +1,20 @@
-package com.dgomon.systeminsight.service
+package com.dgomon.systeminsight.core.service
 
 import android.content.Context
 import android.os.RemoteException
 import android.util.Log
 import androidx.annotation.Keep
+import com.dgomon.systeminsight.service.ILogCallback
+import com.dgomon.systeminsight.service.IPrivilegedCommandService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
+import java.util.zip.GZIPOutputStream
 import kotlin.system.exitProcess
 
 class PrivilegedCommandService : IPrivilegedCommandService.Stub {
@@ -36,27 +40,26 @@ class PrivilegedCommandService : IPrivilegedCommandService.Stub {
     }
 
     @Throws(RemoteException::class)
-    override fun runCommand(cmd: String): String {
-        val result = StringBuilder()
-        runCatching {
+    override fun runCommand(cmd: String): ByteArray {
+        return try {
             val process = Runtime.getRuntime().exec(cmd)
-
-            val reader = BufferedReader(
-                InputStreamReader(process.inputStream)
-            )
-
-            reader.useLines { lines ->
-                lines.forEach { line ->
-                    result.append(line).append('\n')
-                }
-            }
-
+            val input = process.inputStream.bufferedReader().readText()
             process.waitFor()
-        }.onFailure { throwable ->
-            result.append("Error: ").append(throwable.message)
-        }
 
-        return result.toString()
+            ByteArrayOutputStream().use { byteStream ->
+                GZIPOutputStream(byteStream).use { gzip ->
+                    gzip.write(input.toByteArray(Charsets.UTF_8))
+                }
+                byteStream.toByteArray()
+            }
+        } catch (e: Exception) {
+            ByteArrayOutputStream().use { byteStream ->
+                GZIPOutputStream(byteStream).use { gzip ->
+                    gzip.write("Command failed: ${e.message}".toByteArray(Charsets.UTF_8))
+                }
+                byteStream.toByteArray()
+            }
+        }
     }
 
     override fun startLogging(callback: ILogCallback) {

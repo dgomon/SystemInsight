@@ -49,7 +49,7 @@
         </provider>
 
         <service
-                android:name=".service.PrivilegedCommandService"
+                android:name=".core.service.PrivilegedCommandService"
                 android:exported="true"
                 android:permission="android.permission.BIND_REMOTE_SERVICE"
                 tools:ignore="Instantiatable" />

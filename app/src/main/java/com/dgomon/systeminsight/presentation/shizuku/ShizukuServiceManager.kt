@@ -19,8 +19,8 @@ import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.NoPermission
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.RequestingPermission
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Unsupported
 import com.dgomon.systeminsight.service.IPrivilegedCommandService
-import com.dgomon.systeminsight.service.PrivilegedCommandService
-import com.dgomon.systeminsight.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.core.service.PrivilegedCommandService
+import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
