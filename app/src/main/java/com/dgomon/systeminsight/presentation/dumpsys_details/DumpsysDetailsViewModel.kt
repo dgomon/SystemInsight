@@ -19,8 +19,8 @@ class DumpsysDetailsViewModel @Inject constructor(
     private val commandServiceClient: CommandServiceClient,
 ) : ViewModel() {
 
-    private val _serviceOutput = MutableStateFlow<List<String>>(emptyList())
-    val serviceOutput: StateFlow<List<String>> = _serviceOutput
+    private val _serviceOutput = MutableStateFlow("")
+    val serviceOutput: StateFlow<String> = _serviceOutput
 
     private val serviceName = URLDecoder.decode(
         checkNotNull(savedStateHandle["serviceName"]),
@@ -33,12 +33,13 @@ class DumpsysDetailsViewModel @Inject constructor(
 
     private fun loadServiceDetail() {
         viewModelScope.launch(Dispatchers.IO) {
-            _serviceOutput.value = listOf("Loading $serviceName...")
+            _serviceOutput.value = "Loading $serviceName..."
 
             val output = commandServiceClient
                 .runCommand("dumpsys $serviceName")
+                ?: ""
 
-            _serviceOutput.value = listOf(output ?: "")
+            _serviceOutput.value = output
         }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,8 +26,7 @@ fun DumpsysDetailsScreen(
 ) {
     val output by viewModel.serviceOutput.collectAsState()
 
-    if (output.isEmpty() || output.size == 1 && output.first().isBlank()) {
-        // Center message when there's no output or a single blank line
+    if (output.isBlank()) {
         Box(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             contentAlignment = Alignment.Center
@@ -37,9 +37,12 @@ fun DumpsysDetailsScreen(
             )
         }
     } else {
-        // Regular scrollable display for multi-line output
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-            items(output) { line ->
+        val lines = remember(output) { output.lineSequence().toList() }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(16.dp)
+        ) {
+            items(lines) { line ->
                 Text(text = line, style = MaterialTheme.typography.bodySmall)
             }
         }
