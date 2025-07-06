@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
@@ -49,7 +50,7 @@ fun GetPropScreen(
         OutlinedTextField(
             value = query,
             onValueChange = getPropViewModel::setQuery,
-            label = { Text("Search service") },
+            label = { Text(stringResource(R.string.search_property)) },
             singleLine = true,
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             modifier = Modifier

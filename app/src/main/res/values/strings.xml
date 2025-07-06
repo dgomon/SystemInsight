@@ -8,4 +8,5 @@
     <string name="loading_services">Loading services…</string>
     <string name="search_service">Search service</string>
     <string name="share_file">Share file</string>
+    <string name="search_property">Search property</string>
 </resources>
