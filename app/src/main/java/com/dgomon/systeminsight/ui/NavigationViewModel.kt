@@ -1,5 +1,6 @@
 package com.dgomon.systeminsight.ui
 
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,5 +14,9 @@ class NavigationViewModel @Inject constructor() : ViewModel() {
 
     fun setTitle(newTitle: String) {
         _title.value = newTitle
+    }
+
+    fun share() {
+
     }
 }

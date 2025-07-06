@@ -1,14 +1,12 @@
 package com.dgomon.systeminsight.presentation.logcat
 
-import android.content.Context
-import android.net.Uri
 import android.os.RemoteException
 import android.util.Log
-import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dgomon.systeminsight.service.ILogCallback
 import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.core.share.ShareManager
+import com.dgomon.systeminsight.service.ILogCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,12 +17,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class LogcatViewModel @Inject constructor(
-    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider
+    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider,
+    private val shareManager: ShareManager
 ) : ViewModel() {
 
     companion object {
@@ -82,15 +80,9 @@ class LogcatViewModel @Inject constructor(
         _isPaused.value = false
     }
 
-    fun exportLogsToFile(context: Context): Uri {
-        val logFile = File(context.cacheDir, "logcat.txt")
-        logFile.writeText(logBuffer.toList().joinToString("\n"))
-
-        return FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            logFile
-        )
+    fun shareLogFile() {
+        shareManager.shareAsFile(logBuffer.toList().joinToString(
+            System.lineSeparator()), "log_file.txt")
     }
 
     private suspend fun appendToBuffer(line: String) {

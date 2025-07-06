@@ -1,8 +1,10 @@
 package com.dgomon.systeminsight.ui
 
-import android.net.Uri
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -24,11 +26,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
+import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewModel
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
@@ -69,7 +73,7 @@ fun AppNavHost(
                     Destination.DUMPSYS -> DumpsysScreen(
                         modifier = modifier,
                         onServiceClick = { serviceName ->
-                            navController.navigate("dumpsysDetails/${Uri.encode(serviceName)}")
+                            navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
                         },
                         navigationViewModel = navigationViewModel
                     )
@@ -79,7 +83,7 @@ fun AppNavHost(
 
         // Dynamic route for dumpsys details
         composable(
-            route = "dumpsysDetails/{serviceName}",
+            route = DynamicRoutes.DumpsysDetailsWithArg,
             arguments = listOf(navArgument("serviceName") { type = NavType.StringType })
         ) { backStackEntry ->
             val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
@@ -124,12 +128,27 @@ fun MainNavigationBar(modifier: Modifier = Modifier) {
                     )
                 }
             }
+        },
+        floatingActionButton = {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+
+            if (currentRoute?.startsWith(DynamicRoutes.DumpsysDetailsBase) == true) {
+                navBackStackEntry?.let { entry ->
+                    // Use entry as ViewModelStoreOwner
+                    val dumpsysDetailsViewModel: DumpsysDetailsViewModel = hiltViewModel(entry)
+
+                    FloatingActionButton(onClick = { dumpsysDetailsViewModel.shareOutput() }) {
+                        Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
+                }
+            }
         }
     ) { contentPadding ->
         AppNavHost(navController,
             startDestination,
             Modifier.padding(contentPadding),
-            navigationViewModel = navigationViewModel
+            navigationViewModel = navigationViewModel,
         )
     }
 }

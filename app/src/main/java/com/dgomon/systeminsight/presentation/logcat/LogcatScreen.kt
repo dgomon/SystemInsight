@@ -1,6 +1,5 @@
 package com.dgomon.systeminsight.presentation.logcat
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,17 +79,7 @@ fun LogcatScreen(
                 }
 
                 Button(
-                    onClick = {
-                        val uri = logcatViewModel.exportLogsToFile(context)
-                        uri.let {
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_STREAM, it)
-                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            }
-                            context.startActivity(Intent.createChooser(shareIntent, "Share logcat via"))
-                        }
-                    },
+                    onClick = { logcatViewModel.shareLogFile() },
                     enabled = logs.isNotEmpty()
                 ) {
                     Text("Share Logs")

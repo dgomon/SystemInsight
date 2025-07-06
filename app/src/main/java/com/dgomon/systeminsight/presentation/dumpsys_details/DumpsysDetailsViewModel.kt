@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.core.service.CommandServiceClient
+import com.dgomon.systeminsight.core.share.ShareManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class DumpsysDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val commandServiceClient: CommandServiceClient,
+    private val shareManager: ShareManager
 ) : ViewModel() {
 
     private val _serviceOutput = MutableStateFlow("")
@@ -29,6 +31,10 @@ class DumpsysDetailsViewModel @Inject constructor(
 
     init {
         loadServiceDetail()
+    }
+
+    fun shareOutput() {
+        shareManager.shareAsFile(serviceOutput.value, "${serviceOutput.value}.txt")
     }
 
     private fun loadServiceDetail() {
