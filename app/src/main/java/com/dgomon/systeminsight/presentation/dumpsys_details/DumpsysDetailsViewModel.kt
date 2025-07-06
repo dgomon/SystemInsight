@@ -34,7 +34,7 @@ class DumpsysDetailsViewModel @Inject constructor(
     }
 
     fun shareOutput() {
-        shareManager.shareAsFile(serviceOutput.value, "${serviceOutput.value}.txt")
+        shareManager.shareAsFile(serviceOutput.value, "${serviceName}.txt")
     }
 
     private fun loadServiceDetail() {

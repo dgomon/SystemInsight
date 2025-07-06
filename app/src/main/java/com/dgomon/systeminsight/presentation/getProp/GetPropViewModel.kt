@@ -2,6 +2,7 @@ package com.dgomon.systeminsight.presentation.getProp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dgomon.systeminsight.core.share.ShareManager
 import com.dgomon.systeminsight.data.shell.ShellCommandExecutor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,10 +16,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GetPropViewModel @Inject constructor(
-    private val executor: ShellCommandExecutor
+    private val executor: ShellCommandExecutor,
+    private val shareManager: ShareManager
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
+
+    private lateinit var listOfProps: List<String>
 
     // Combine query and props to emit filtered results
     private val _props = MutableStateFlow<List<PropEntry>>(emptyList())
@@ -39,12 +43,17 @@ class GetPropViewModel @Inject constructor(
         loadProps()
     }
 
+    fun shareOutput() {
+        shareManager.shareAsFile(listOfProps.joinToString(
+            System.lineSeparator()), "props.txt")
+    }
+
     private fun loadProps() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val buffer = executor.runCommand("getprop")
+                listOfProps = executor.runCommand("getprop")
 
-                _props.value = buffer.mapNotNull { line ->
+                _props.value = listOfProps.mapNotNull { line ->
                     val match = Regex("""\[(.+?)]: \[(.+?)]""").matchEntire(line)
                     match?.let {
                         val (key, value) = it.destructured

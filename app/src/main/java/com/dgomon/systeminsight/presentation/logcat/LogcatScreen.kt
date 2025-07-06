@@ -8,7 +8,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +34,8 @@ import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
 fun LogcatScreen(
     modifier: Modifier = Modifier,
     navigationViewModel: NavigationViewModel,
-    logcatViewModel: LogcatViewModel = hiltViewModel()
+    logcatViewModel: LogcatViewModel = hiltViewModel(),
+    onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
     val logs by logcatViewModel.logs.collectAsState(initial = "")
     val isConnected by logcatViewModel.isConnected.collectAsState()
@@ -41,6 +46,19 @@ fun LogcatScreen(
 
     LaunchedEffect(Unit) {
         navigationViewModel.setTitle(context.getString(R.string.title_logcat))
+    }
+
+    // Update FAB whenever logs change
+    LaunchedEffect(logs) {
+        if (logs.isEmpty()) {
+            onFabContent {} // Clear FAB
+        } else {
+            onFabContent {
+                FloatingActionButton(onClick = { logcatViewModel.shareOutput() }) {
+                    Icon(Icons.Default.Share, contentDescription = "Share")
+                }
+            }
+        }
     }
 
     RequirePrivilegedConnection(isConnected = isConnected, modifier = modifier) {
@@ -79,7 +97,7 @@ fun LogcatScreen(
                 }
 
                 Button(
-                    onClick = { logcatViewModel.shareLogFile() },
+                    onClick = { logcatViewModel.shareOutput() },
                     enabled = logs.isNotEmpty()
                 ) {
                     Text("Share Logs")

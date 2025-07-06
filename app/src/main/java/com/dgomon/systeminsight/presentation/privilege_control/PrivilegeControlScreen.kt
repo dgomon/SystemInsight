@@ -30,12 +30,14 @@ fun PrivilegeControlScreen(
     modifier: Modifier = Modifier,
     navigationViewModel: NavigationViewModel,
     privilegeControlViewModel: PrivilegeControlViewModel = hiltViewModel(),
+    onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
     val isConnected by privilegeControlViewModel.isConnected.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         navigationViewModel.setTitle(context.getString(R.string.title_privilege_control))
+        onFabContent {} // clears the FAB
     }
 
     Box(

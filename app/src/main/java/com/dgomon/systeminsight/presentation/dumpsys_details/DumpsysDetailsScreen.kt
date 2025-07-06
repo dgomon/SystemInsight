@@ -4,9 +4,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -15,15 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
-import com.dgomon.systeminsight.ui.NavigationViewModel
 
 @Composable
 fun DumpsysDetailsScreen(
     modifier: Modifier = Modifier,
     serviceName: String,
     dumpsysDetailsViewModel: DumpsysDetailsViewModel = hiltViewModel(),
+    onFabContent: ((@Composable () -> Unit) -> Unit)
 ) {
     val output by dumpsysDetailsViewModel.serviceOutput.collectAsState()
+
+    // Update FAB whenever logs change
+    LaunchedEffect(output) {
+        if (output.isEmpty()) {
+            onFabContent {} // Clear FAB
+        } else {
+            onFabContent {
+                FloatingActionButton(onClick = { dumpsysDetailsViewModel.shareOutput() }) {
+                    Icon(Icons.Default.Share, contentDescription = "Share")
+                }
+            }
+        }
+    }
 
     if (output.isBlank()) {
         Box(
@@ -42,7 +60,7 @@ fun DumpsysDetailsScreen(
             modifier = modifier.fillMaxSize()
         ) {
             items(lines) { line ->
-                Text(text = line, style = MaterialTheme.typography.bodySmall)
+                Text(text = line, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

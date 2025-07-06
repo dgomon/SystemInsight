@@ -80,7 +80,7 @@ class LogcatViewModel @Inject constructor(
         _isPaused.value = false
     }
 
-    fun shareLogFile() {
+    fun shareOutput() {
         shareManager.shareAsFile(logBuffer.toList().joinToString(
             System.lineSeparator()), "log_file.txt")
     }

@@ -36,7 +36,8 @@ fun DumpsysScreen(
     navigationViewModel: NavigationViewModel,
     privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
-    onServiceClick: (String) -> Unit
+    onServiceClick: (String) -> Unit,
+    onFabContent: ((@Composable () -> Unit) -> Unit)
 ) {
     val query by dumpsysViewModel.query.collectAsState()
     val services by dumpsysViewModel.filteredServices.collectAsState()
@@ -44,6 +45,7 @@ fun DumpsysScreen(
 
     LaunchedEffect(Unit) {
         navigationViewModel.setTitle("Dumpsys")
+        onFabContent {} // clears the FAB
     }
 
     LaunchedEffect(isConnected) {

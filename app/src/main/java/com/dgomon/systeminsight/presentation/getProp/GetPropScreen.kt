@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -28,6 +30,7 @@ fun GetPropScreen(
     modifier: Modifier,
     navigationViewModel: NavigationViewModel,
     getPropViewModel: GetPropViewModel = hiltViewModel(),
+    onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
     val props by getPropViewModel.filteredProps.collectAsState()
     val query by getPropViewModel.query.collectAsState()
@@ -40,6 +43,12 @@ fun GetPropScreen(
 
     LaunchedEffect(Unit) {
         navigationViewModel.setTitle(context.getString(R.string.title_properties))
+
+        onFabContent {
+            FloatingActionButton(onClick = { getPropViewModel.shareOutput() }) {
+                Icon(Icons.Default.Share, contentDescription = "Share")
+            }
+        }
     }
     Column(
         modifier = Modifier
