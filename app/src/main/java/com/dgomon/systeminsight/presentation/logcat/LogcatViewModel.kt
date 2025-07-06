@@ -26,7 +26,7 @@ class LogcatViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val LOG_BUFFER_CAPACITY = 1000
+        private const val LOG_BUFFER_CAPACITY = 20000
     }
 
     private val logBuffer = ArrayDeque<String>(LOG_BUFFER_CAPACITY)
