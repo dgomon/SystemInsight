@@ -3,11 +3,10 @@ package com.dgomon.systeminsight.presentation.logcat
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +35,8 @@ fun LogcatScreen(
     logcatViewModel: LogcatViewModel = hiltViewModel(),
     onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
-    val logs by logcatViewModel.logs.collectAsState(initial = "")
+    val logLines by logcatViewModel.logLines.collectAsState()
+
     val isConnected by logcatViewModel.isConnected.collectAsState()
     val isLogging by logcatViewModel.isCapturing.collectAsState()
     val isPaused by logcatViewModel.isPaused.collectAsState()
@@ -49,8 +48,8 @@ fun LogcatScreen(
     }
 
     // Update FAB whenever logs change
-    LaunchedEffect(logs) {
-        if (logs.isEmpty()) {
+    LaunchedEffect(logLines) {
+        if (logLines.isEmpty()) {
             onFabContent {} // Clear FAB
         } else {
             onFabContent {
@@ -97,25 +96,39 @@ fun LogcatScreen(
                 }
 
                 Button(
+                    onClick = {
+                        logcatViewModel.clear()
+                    },
+                    enabled = logLines.isNotEmpty()
+                ) {
+                    Text(text = "Clear")
+                }
+
+                Button(
                     onClick = { logcatViewModel.shareOutput() },
-                    enabled = logs.isNotEmpty()
+                    enabled = logLines.isNotEmpty()
                 ) {
                     Text("Share Logs")
                 }
+
+                val listState = rememberLazyListState()
+                LaunchedEffect(logLines.size) {
+                    // Scroll to the last item when a new one is added
+                    if (logLines.isNotEmpty()) {
+                        listState.scrollToItem(logLines.lastIndex)
+                    }
+                }
+
+                LazyColumn(
+                    state = listState,
+                    modifier = modifier
+                        .fillMaxSize()
+                ) {
+                    items(logLines) { line ->
+                        Text(text = line, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
             }
-
-            val scrollState = rememberScrollState()
-
-            Text(
-                text = logs,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .height(144.dp)
-                    .verticalScroll(scrollState)
-                    .padding(vertical = 2.dp)
-            )
         }
     }
 }

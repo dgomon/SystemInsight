@@ -8,11 +8,8 @@ import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import com.dgomon.systeminsight.core.share.ShareManager
 import com.dgomon.systeminsight.service.ILogCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -26,15 +23,17 @@ class LogcatViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val LOG_BUFFER_CAPACITY = 20000
+        private const val LOG_BUFFER_CAPACITY = 200
     }
 
-    private val logBuffer = ArrayDeque<String>(LOG_BUFFER_CAPACITY)
+    // aggregates logs internally in the ViewModel
+    private val _logBuffer = ArrayDeque<String>(LOG_BUFFER_CAPACITY)
+
+    // expose the logs to the LogcatScreen
+    private val _logLines = MutableStateFlow<List<String>>(emptyList())
+    val logLines = _logLines
+
     private val logMutex = Mutex()
-
-    private val logChannel = MutableSharedFlow<String>(replay = 0)
-    val logs: SharedFlow<String> = logChannel.asSharedFlow()
-
     private val _isCapturing = MutableStateFlow(false)
     val isCapturing: StateFlow<Boolean> = _isCapturing.asStateFlow()
 
@@ -47,7 +46,6 @@ class LogcatViewModel @Inject constructor(
         override fun onLogLine(line: String) {
             if (!_isPaused.value) {
                 viewModelScope.launch {
-                    logChannel.emit(line)
                     appendToBuffer(line)
                 }
             }
@@ -81,16 +79,22 @@ class LogcatViewModel @Inject constructor(
     }
 
     fun shareOutput() {
-        shareManager.shareAsFile(logBuffer.toList().joinToString(
+        shareManager.shareAsFile(_logBuffer.toList().joinToString(
             System.lineSeparator()), "log_file.txt")
+    }
+
+    fun clear() {
+        _logBuffer.clear()
+        _logLines.value = emptyList()
     }
 
     private suspend fun appendToBuffer(line: String) {
         logMutex.withLock {
-            if (logBuffer.size >= LOG_BUFFER_CAPACITY) {
-                logBuffer.removeFirst()
+            if (_logBuffer.size >= LOG_BUFFER_CAPACITY) {
+                _logBuffer.removeFirst()
             }
-            logBuffer.addLast(line)
+            _logBuffer.addLast(line)
+            _logLines.value = _logBuffer.toList()
         }
     }
 
