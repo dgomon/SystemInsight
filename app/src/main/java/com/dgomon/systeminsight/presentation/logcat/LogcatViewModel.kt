@@ -16,6 +16,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
+enum class LogcatState {
+    Idle,
+    Collecting,
+}
+
 @HiltViewModel
 class LogcatViewModel @Inject constructor(
     private val serviceConnectionProvider: PrivilegedServiceConnectionProvider,
@@ -35,17 +40,14 @@ class LogcatViewModel @Inject constructor(
     val logLines = _logLines
 
     private val logMutex = Mutex()
-    private val _isCapturing = MutableStateFlow(false)
-    val isCapturing: StateFlow<Boolean> = _isCapturing.asStateFlow()
-
-    private val _isPaused = MutableStateFlow(false)
-    val isPaused: StateFlow<Boolean> = _isPaused.asStateFlow()
-
     val isConnected: StateFlow<Boolean> = serviceConnectionProvider.isConnected
+
+    private val _state = MutableStateFlow(LogcatState.Idle)
+    val state: StateFlow<LogcatState> = _state.asStateFlow()
 
     private val logCallback = object : ILogCallback.Stub() {
         override fun onLogLine(line: String) {
-            if (!_isPaused.value) {
+            if (_state.value != LogcatState.Idle) {
                 viewModelScope.launch {
                     appendToBuffer(line)
                 }
@@ -53,40 +55,32 @@ class LogcatViewModel @Inject constructor(
         }
     }
 
-    fun startCapture() {
+    fun resumeCapture() {
         try {
             serviceConnectionProvider.getService()?.startLogging(logCallback)
-            _isCapturing.value = true
+            _state.value = LogcatState.Collecting
         } catch (e: RemoteException) {
             Log.e("LogViewModel", "Failed to start logging", e)
         }
     }
 
-    fun stopCapture() {
+    fun pauseCapture() {
         try {
             serviceConnectionProvider.getService()?.stopLogging()
-            _isCapturing.value = false
+            _state.value = LogcatState.Idle
         } catch (e: RemoteException) {
             Log.e("LogViewModel", "Failed to stop logging", e)
         }
     }
 
-    fun pauseCapture() {
-        _isPaused.value = true
-    }
-
-    fun resumeCapture() {
-        _isPaused.value = false
+    fun clear() {
+        _logBuffer.clear()
+        _logLines.value = emptyList()
     }
 
     fun shareOutput() {
         shareManager.shareAsFile(_logBuffer.toList().joinToString(
             System.lineSeparator()), "log_file.txt")
-    }
-
-    fun clear() {
-        _logBuffer.clear()
-        _logLines.value = emptyList()
     }
 
     private suspend fun appendToBuffer(line: String) {
@@ -103,7 +97,7 @@ class LogcatViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        stopCapture()
+        pauseCapture()
         super.onCleared()
     }
 }

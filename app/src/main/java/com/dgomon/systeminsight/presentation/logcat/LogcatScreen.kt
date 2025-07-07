@@ -8,16 +8,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,10 +40,8 @@ fun LogcatScreen(
     onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
     val logLines by logcatViewModel.logLines.collectAsState()
-
     val isConnected by logcatViewModel.isConnected.collectAsState()
-    val isLogging by logcatViewModel.isCapturing.collectAsState()
-    val isPaused by logcatViewModel.isPaused.collectAsState()
+    val state by logcatViewModel.state.collectAsState()
 
     val context = LocalContext.current
 
@@ -66,67 +68,58 @@ fun LogcatScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Column {
-                Button(
-                    onClick = { logcatViewModel.startCapture() },
-                    enabled = !isLogging
+            val listState = rememberLazyListState()
+            LaunchedEffect(logLines.size) {
+                // Scroll to the last item when a new one is added
+                if (logLines.isNotEmpty()) {
+                    listState.scrollToItem(logLines.lastIndex)
+                }
+            }
+
+            LazyColumn(
+                state = listState,
+                modifier = modifier
+                    .fillMaxSize()
+            ) {
+                items(logLines) { line ->
+                    Text(text = line, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(16.dp)
+            ) {
+
+                IconButton(
+                    onClick = {
+                        if (state == LogcatState.Idle) {
+                            logcatViewModel.resumeCapture()
+                        } else {
+                            logcatViewModel.pauseCapture()
+                        }
+                    },
+                    enabled = true
                 ) {
-                    Text(text = "Start")
+                    Icon(imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
+                        Icons.Default.Pause, contentDescription = "Share")
                 }
 
-                Button(
-                    onClick = { logcatViewModel.stopCapture() },
-                    enabled = isLogging
-                ) {
-                    Text(text = "Stop")
-                }
-
-                Button(
-                    onClick = { logcatViewModel.pauseCapture() },
-                    enabled = isLogging && !isPaused
-                ) {
-                    Text(text = "Pause")
-                }
-
-                Button(
-                    onClick = { logcatViewModel.resumeCapture() },
-                    enabled = isLogging && isPaused
-                ) {
-                    Text(text = "Resume")
-                }
-
-                Button(
+                IconButton(
                     onClick = {
                         logcatViewModel.clear()
                     },
                     enabled = logLines.isNotEmpty()
                 ) {
-                    Text(text = "Clear")
+                    Icon(Icons.Default.Delete, contentDescription = "Share")
                 }
 
-                Button(
+                IconButton(
                     onClick = { logcatViewModel.shareOutput() },
                     enabled = logLines.isNotEmpty()
                 ) {
-                    Text("Share Logs")
-                }
-
-                val listState = rememberLazyListState()
-                LaunchedEffect(logLines.size) {
-                    // Scroll to the last item when a new one is added
-                    if (logLines.isNotEmpty()) {
-                        listState.scrollToItem(logLines.lastIndex)
-                    }
-                }
-
-                LazyColumn(
-                    state = listState,
-                    modifier = modifier
-                        .fillMaxSize()
-                ) {
-                    items(logLines) { line ->
-                        Text(text = line, style = MaterialTheme.typography.bodyMedium)
-                    }
+                    Icon(Icons.Default.Share, contentDescription = "Share")
                 }
             }
         }
