@@ -39,8 +39,6 @@ class DumpsysDetailsViewModel @Inject constructor(
 
     private fun loadServiceDetail() {
         viewModelScope.launch(Dispatchers.IO) {
-            _serviceOutput.value = "Loading $serviceName..."
-
             val output = commandServiceClient
                 .runCommand("dumpsys $serviceName")
                 ?: ""
