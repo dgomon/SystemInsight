@@ -23,7 +23,8 @@ class LogcatViewModel @Inject constructor(
 ) : ViewModel() {
 
     companion object {
-        private const val LOG_BUFFER_CAPACITY = 200
+        private const val LOG_BUFFER_CAPACITY = 20000
+        private const val LOG_DISPLAY_CAPACITY = 100
     }
 
     // aggregates logs internally in the ViewModel
@@ -94,7 +95,10 @@ class LogcatViewModel @Inject constructor(
                 _logBuffer.removeFirst()
             }
             _logBuffer.addLast(line)
-            _logLines.value = _logBuffer.toList()
+
+            // Update _logLines with only the latest LOG_DISPLAY_CAPACITY entries
+            val start = (_logBuffer.size - LOG_DISPLAY_CAPACITY).coerceAtLeast(0)
+            _logLines.value = _logBuffer.drop(start)
         }
     }
 
