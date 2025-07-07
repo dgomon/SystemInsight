@@ -32,9 +32,9 @@ enum class Destination(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: Destination,
-    modifier: Modifier = Modifier,
     navigationViewModel: NavigationViewModel = hiltViewModel(),
     onFabChanged: ((@Composable () -> Unit) -> Unit),
 ) {
@@ -58,7 +58,6 @@ fun AppNavHost(
                             onFabContent = onFabChanged)
                     }
                     Destination.DUMPSYS -> DumpsysScreen(
-                        modifier = modifier,
                         onServiceClick = { serviceName ->
                             navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
                         },
@@ -77,7 +76,6 @@ fun AppNavHost(
             val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
             DumpsysDetailsScreen(
                 serviceName = serviceName,
-                modifier = modifier,
                 onFabContent = onFabChanged
             )
         }

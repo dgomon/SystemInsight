@@ -26,7 +26,7 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainNavigationBar(modifier: Modifier = Modifier) {
+fun MainNavigationBar() {
     val navController = rememberNavController()
     val startDestination = Destination.DUMPSYS
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
@@ -37,7 +37,6 @@ fun MainNavigationBar(modifier: Modifier = Modifier) {
     var fabContent by remember { mutableStateOf<@Composable () -> Unit>({}) }
 
     Scaffold(
-        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(title) },
@@ -65,9 +64,10 @@ fun MainNavigationBar(modifier: Modifier = Modifier) {
         },
         floatingActionButton = { fabContent() }, // delegated to screen
     ) { contentPadding ->
-        AppNavHost(navController,
-            startDestination,
+        AppNavHost(
             Modifier.padding(contentPadding),
+            navController,
+            startDestination,
             navigationViewModel = navigationViewModel,
             onFabChanged = { fabContent = it },
         )
