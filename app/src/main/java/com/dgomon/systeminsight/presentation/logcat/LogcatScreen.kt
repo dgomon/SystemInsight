@@ -12,12 +12,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,14 +31,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.ui.AppScaffoldViewModel
 import com.dgomon.systeminsight.ui.NavigationViewModel
 import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun LogcatScreen(
     modifier: Modifier = Modifier,
-    navigationViewModel: NavigationViewModel,
+//    navigationViewModel: NavigationViewModel,
+    scaffoldViewModel: AppScaffoldViewModel,
     logcatViewModel: LogcatViewModel = hiltViewModel(),
     onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
@@ -46,7 +52,20 @@ fun LogcatScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        navigationViewModel.setTitle(context.getString(R.string.title_logcat))
+//        navigationViewModel.setTitle(context.getString(R.string.title_logcat))
+        scaffoldViewModel.topBarContent.value = {
+            TopAppBar(
+                title = { Text("Logcat") },
+                actions = {
+                    IconButton(onClick = { logcatViewModel.clear() }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Clear")
+                    }
+                    IconButton(onClick = { logcatViewModel.shareOutput() }) {
+                        Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
+                }
+            )
+        }
     }
 
     // Update FAB whenever logs change
@@ -124,6 +143,12 @@ fun LogcatScreen(
                     Icon(Icons.Default.Share, contentDescription = "Share")
                 }
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            scaffoldViewModel.topBarContent.value = null
         }
     }
 }

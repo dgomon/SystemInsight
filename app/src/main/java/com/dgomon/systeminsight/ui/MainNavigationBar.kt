@@ -26,20 +26,19 @@ import androidx.navigation.compose.rememberNavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavigationBar(
-    navigationViewModel: NavigationViewModel = hiltViewModel()
+    navigationViewModel: NavigationViewModel = hiltViewModel(),
+    scaffoldViewModel: AppScaffoldViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
     val startDestination = Destination.LOGCAT
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
-    val title by navigationViewModel.title.collectAsState()
+    val topBarContent by scaffoldViewModel.topBarContent
     var fabContent by remember { mutableStateOf<@Composable () -> Unit>({}) }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(title) },
-            )
+            topBarContent?.invoke() ?: TopAppBar(title = { Text("Default") })
         },
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
@@ -68,6 +67,7 @@ fun MainNavigationBar(
             navController,
             startDestination,
             navigationViewModel = navigationViewModel,
+            scaffoldViewModel = scaffoldViewModel,
             onFabChanged = { fabContent = it },
         )
     }

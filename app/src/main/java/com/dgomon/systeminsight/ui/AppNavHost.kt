@@ -35,6 +35,7 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: Destination,
     navigationViewModel: NavigationViewModel = hiltViewModel(),
+    scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
     onFabChanged: ((@Composable () -> Unit) -> Unit),
 ) {
     NavHost(
@@ -53,7 +54,7 @@ fun AppNavHost(
                     )
                     Destination.LOGCAT -> LogcatScreen(
                         modifier,
-                        navigationViewModel = navigationViewModel,
+                        scaffoldViewModel = scaffoldViewModel,
                         onFabContent = onFabChanged
                     )
                     Destination.GETPROP -> GetPropScreen(
