@@ -102,8 +102,10 @@ fun LogcatScreen(
                     },
                     enabled = true
                 ) {
-                    Icon(imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
-                        Icons.Default.Pause, contentDescription = "Share")
+                    Icon(
+                        imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
+                            Icons.Default.Pause, contentDescription = "Share",
+                    )
                 }
 
                 IconButton(
