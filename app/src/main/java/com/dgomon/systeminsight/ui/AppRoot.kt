@@ -3,7 +3,7 @@ package com.dgomon.systeminsight.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dgomon.systeminsight.MainViewModel
+import com.dgomon.systeminsight.presentation.root.MainViewModel
 
 @Composable
 fun AppRoot(

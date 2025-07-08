@@ -1,6 +1,5 @@
 package com.dgomon.systeminsight.presentation.dumpsys
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,8 +31,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
-import com.dgomon.systeminsight.ui.NavigationViewModel
-import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
+import com.dgomon.systeminsight.presentation.navigation.NavigationViewModel
+import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 
 @Composable
 fun DumpsysScreen(

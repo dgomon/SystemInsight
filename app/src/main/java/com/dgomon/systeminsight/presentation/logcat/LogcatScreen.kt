@@ -30,10 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dgomon.systeminsight.R
-import com.dgomon.systeminsight.ui.AppScaffoldViewModel
-import com.dgomon.systeminsight.ui.NavigationViewModel
-import com.dgomon.systeminsight.ui.RequirePrivilegedConnection
+import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
+import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview

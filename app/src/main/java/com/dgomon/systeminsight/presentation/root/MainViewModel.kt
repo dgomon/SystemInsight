@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight
+package com.dgomon.systeminsight.presentation.root
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

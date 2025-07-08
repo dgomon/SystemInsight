@@ -14,7 +14,10 @@ import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
+import com.dgomon.systeminsight.presentation.navigation.NavigationViewModel
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
+import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
+import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
 
 enum class Destination(
     val route: String,

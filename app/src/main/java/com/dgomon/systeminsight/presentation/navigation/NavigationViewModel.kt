@@ -1,6 +1,5 @@
-package com.dgomon.systeminsight.ui
+package com.dgomon.systeminsight.presentation.navigation
 
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

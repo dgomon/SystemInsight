@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.ui
+package com.dgomon.systeminsight.presentation.scaffold
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

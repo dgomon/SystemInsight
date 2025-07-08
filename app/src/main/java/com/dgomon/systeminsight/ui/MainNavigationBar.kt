@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.dgomon.systeminsight.presentation.navigation.NavigationViewModel
+import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.ui
+package com.dgomon.systeminsight.ui.common
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

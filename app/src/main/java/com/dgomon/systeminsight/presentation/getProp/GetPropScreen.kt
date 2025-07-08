@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
-import com.dgomon.systeminsight.ui.NavigationViewModel
+import com.dgomon.systeminsight.presentation.navigation.NavigationViewModel
 
 @Composable
 fun GetPropScreen(
