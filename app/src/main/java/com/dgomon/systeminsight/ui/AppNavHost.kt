@@ -58,7 +58,6 @@ fun AppNavHost(
                     Destination.LOGCAT -> LogcatScreen(
                         modifier,
                         scaffoldViewModel = scaffoldViewModel,
-                        onFabContent = onFabChanged
                     )
                     Destination.GETPROP -> GetPropScreen(
                         modifier,

@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +25,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 
@@ -38,44 +38,51 @@ import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 @Composable
 fun LogcatScreen(
     modifier: Modifier = Modifier,
-//    navigationViewModel: NavigationViewModel,
     scaffoldViewModel: AppScaffoldViewModel,
     logcatViewModel: LogcatViewModel = hiltViewModel(),
-    onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
     val logLines by logcatViewModel.logLines.collectAsState()
     val isConnected by logcatViewModel.isConnected.collectAsState()
     val state by logcatViewModel.state.collectAsState()
 
-    val context = LocalContext.current
-
     LaunchedEffect(Unit) {
-//        navigationViewModel.setTitle(context.getString(R.string.title_logcat))
         scaffoldViewModel.topBarContent.value = {
             TopAppBar(
-                title = { Text("Logcat") },
+                title = { Text(stringResource(R.string.title_logcat)) },
                 actions = {
-                    IconButton(onClick = { logcatViewModel.clear() }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Clear")
+                    IconButton(
+                        onClick = {
+                            if (state == LogcatState.Idle) {
+                                logcatViewModel.resumeCapture()
+                            } else {
+                                logcatViewModel.pauseCapture()
+                            }
+                        },
+                        enabled = true
+                    ) {
+                        Icon(
+                            imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
+                                Icons.Default.Pause, contentDescription = "Share",
+                        )
                     }
-                    IconButton(onClick = { logcatViewModel.shareOutput() }) {
+
+                    IconButton(
+                        onClick = {
+                            logcatViewModel.clear()
+                        },
+                        enabled = logLines.isNotEmpty()
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = "Share")
+                    }
+
+                    IconButton(
+                        onClick = { logcatViewModel.shareOutput() },
+                        enabled = logLines.isNotEmpty()
+                    ) {
                         Icon(Icons.Default.Share, contentDescription = "Share")
                     }
                 }
             )
-        }
-    }
-
-    // Update FAB whenever logs change
-    LaunchedEffect(logLines) {
-        if (logLines.isEmpty()) {
-            onFabContent {} // Clear FAB
-        } else {
-            onFabContent {
-                FloatingActionButton(onClick = { logcatViewModel.shareOutput() }) {
-                    Icon(Icons.Default.Share, contentDescription = "Share")
-                }
-            }
         }
     }
 
@@ -109,37 +116,37 @@ fun LogcatScreen(
                     .padding(16.dp)
             ) {
 
-                IconButton(
-                    onClick = {
-                        if (state == LogcatState.Idle) {
-                            logcatViewModel.resumeCapture()
-                        } else {
-                            logcatViewModel.pauseCapture()
-                        }
-                    },
-                    enabled = true
-                ) {
-                    Icon(
-                        imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
-                            Icons.Default.Pause, contentDescription = "Share",
-                    )
-                }
-
-                IconButton(
-                    onClick = {
-                        logcatViewModel.clear()
-                    },
-                    enabled = logLines.isNotEmpty()
-                ) {
-                    Icon(Icons.Default.Delete, contentDescription = "Share")
-                }
-
-                IconButton(
-                    onClick = { logcatViewModel.shareOutput() },
-                    enabled = logLines.isNotEmpty()
-                ) {
-                    Icon(Icons.Default.Share, contentDescription = "Share")
-                }
+//                IconButton(
+//                    onClick = {
+//                        if (state == LogcatState.Idle) {
+//                            logcatViewModel.resumeCapture()
+//                        } else {
+//                            logcatViewModel.pauseCapture()
+//                        }
+//                    },
+//                    enabled = true
+//                ) {
+//                    Icon(
+//                        imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
+//                            Icons.Default.Pause, contentDescription = "Share",
+//                    )
+//                }
+//
+//                IconButton(
+//                    onClick = {
+//                        logcatViewModel.clear()
+//                    },
+//                    enabled = logLines.isNotEmpty()
+//                ) {
+//                    Icon(Icons.Default.Delete, contentDescription = "Share")
+//                }
+//
+//                IconButton(
+//                    onClick = { logcatViewModel.shareOutput() },
+//                    enabled = logLines.isNotEmpty()
+//                ) {
+//                    Icon(Icons.Default.Share, contentDescription = "Share")
+//                }
             }
         }
     }
