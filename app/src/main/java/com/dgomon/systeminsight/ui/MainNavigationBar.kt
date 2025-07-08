@@ -23,17 +23,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainNavigationBar() {
+fun MainNavigationBar(
+    navigationViewModel: NavigationViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
-    val startDestination = Destination.DUMPSYS
+    val startDestination = Destination.LOGCAT
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
-    val navigationViewModel: NavigationViewModel = hiltViewModel()
     val title by navigationViewModel.title.collectAsState()
-
     var fabContent by remember { mutableStateOf<@Composable () -> Unit>({}) }
 
     Scaffold(

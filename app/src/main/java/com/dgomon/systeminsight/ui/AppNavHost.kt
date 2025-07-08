@@ -16,7 +16,6 @@ import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
 
-
 enum class Destination(
     val route: String,
     val label: String,
@@ -47,16 +46,21 @@ fun AppNavHost(
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
-                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(modifier,
+                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(
+                        modifier,
                         navigationViewModel = navigationViewModel,
-                        onFabContent = onFabChanged)
-                    Destination.LOGCAT -> LogcatScreen(modifier,
+                        onFabContent = onFabChanged
+                    )
+                    Destination.LOGCAT -> LogcatScreen(
+                        modifier,
                         navigationViewModel = navigationViewModel,
-                        onFabContent = onFabChanged)
-                    Destination.GETPROP -> {
-                        GetPropScreen(modifier, navigationViewModel = navigationViewModel,
-                            onFabContent = onFabChanged)
-                    }
+                        onFabContent = onFabChanged
+                    )
+                    Destination.GETPROP -> GetPropScreen(
+                        modifier,
+                        navigationViewModel = navigationViewModel,
+                        onFabContent = onFabChanged
+                    )
                     Destination.DUMPSYS -> DumpsysScreen(
                         onServiceClick = { serviceName ->
                             navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
