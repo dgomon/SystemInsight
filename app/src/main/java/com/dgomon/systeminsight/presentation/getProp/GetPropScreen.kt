@@ -1,12 +1,13 @@
 package com.dgomon.systeminsight.presentation.getProp
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,41 +37,49 @@ fun GetPropScreen(
 ) {
     val props by getPropViewModel.filteredProps.collectAsState()
     val query by getPropViewModel.query.collectAsState()
+    val isSearchActive by getPropViewModel.isSearchActive.collectAsState()
 
     // Convert to tree
     val root = remember(props) { buildTree(props) }
     val nodes = root.children
 
     LaunchedEffect(Unit) {
-
         scaffoldViewModel.topBarContent.value = {
             TopAppBar(
-                title = { Text(stringResource(R.string.title_properties)) },
-                actions = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 8.dp, end = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                title = {
+                    if (isSearchActive) {
                         OutlinedTextField(
                             value = query,
                             onValueChange = getPropViewModel::setQuery,
-                            label = { Text(stringResource(R.string.search_property)) },
+                            placeholder = { Text(stringResource(R.string.search_property)) },
                             singleLine = true,
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                            trailingIcon = {
+                                if (query.isNotEmpty()) {
+                                    IconButton(onClick = { getPropViewModel.setQuery("") }) {
+                                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                                    }
+                                }
+                            },
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(bottom = 8.dp)
+                                .fillMaxWidth()
+                                .heightIn(min = 56.dp) // Ensure it fits well in the TopAppBar
                         )
-
-
-                        IconButton(
-                            onClick = { getPropViewModel.shareOutput() },
-                            enabled = true
-                        ) {
-                            Icon(Icons.Default.Share, contentDescription = "Share")
-                        }
+                    } else {
+                        Text(stringResource(R.string.title_properties))
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { getPropViewModel.shareOutput() },
+                        enabled = true
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
+                    IconButton(
+                        onClick = { getPropViewModel.toggleSearchMode() }
+                    ) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 }
             )

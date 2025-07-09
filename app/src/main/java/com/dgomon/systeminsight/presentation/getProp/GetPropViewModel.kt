@@ -1,5 +1,6 @@
 package com.dgomon.systeminsight.presentation.getProp
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.core.share.ShareManager
@@ -21,6 +22,13 @@ class GetPropViewModel @Inject constructor(
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
+
+    private val _isSearchActive = MutableStateFlow(false)
+    val isSearchActive = _isSearchActive
+
+    fun toggleSearchMode() {
+        _isSearchActive.value = !_isSearchActive.value
+    }
 
     private lateinit var listOfProps: List<String>
 
