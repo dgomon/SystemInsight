@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun RequirePrivilegedConnection(
-    isConnected: Boolean,
     modifier: Modifier = Modifier,
+    isConnected: Boolean,
     fallbackMessage: String = "Waiting for privileged connection...",
     content: @Composable () -> Unit
 ) {
@@ -19,7 +19,7 @@ fun RequirePrivilegedConnection(
         content()
     } else {
         Box(
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text(

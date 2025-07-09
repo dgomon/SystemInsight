@@ -48,15 +48,12 @@ fun AppNavHost(
             composable(destination.route) {
                 when (destination) {
                     Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(
-                        modifier,
                         scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.LOGCAT -> LogcatScreen(
-                        modifier,
                         scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.GETPROP -> GetPropScreen(
-                        modifier,
                         scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.DUMPSYS -> DumpsysScreen(

@@ -40,7 +40,7 @@ import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun GetPropScreen(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel,
     getPropViewModel: GetPropViewModel = hiltViewModel(),
 ) {
