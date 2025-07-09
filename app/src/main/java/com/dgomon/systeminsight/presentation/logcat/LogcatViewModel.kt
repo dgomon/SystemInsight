@@ -9,8 +9,11 @@ import com.dgomon.systeminsight.core.share.ShareManager
 import com.dgomon.systeminsight.service.ILogCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -45,6 +48,19 @@ class LogcatViewModel @Inject constructor(
     private val _state = MutableStateFlow(LogcatState.Idle)
     val state: StateFlow<LogcatState> = _state.asStateFlow()
 
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query
+
+    // Combine query and services to emit filtered results
+    val filteredLogLines: StateFlow<List<String>> = combine(_query, _logLines) { query, logLine ->
+        if (query.isBlank()) logLine
+        else logLine.filter { it.contains(query, ignoreCase = true) }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
     private val logCallback = object : ILogCallback.Stub() {
         override fun onLogLine(line: String) {
             if (_state.value != LogcatState.Idle) {
@@ -55,6 +71,9 @@ class LogcatViewModel @Inject constructor(
         }
     }
 
+    fun setQuery(newQuery: String) {
+        _query.value = newQuery
+    }
     fun resumeCapture() {
         try {
             serviceConnectionProvider.getService()?.startLogging(logCallback)

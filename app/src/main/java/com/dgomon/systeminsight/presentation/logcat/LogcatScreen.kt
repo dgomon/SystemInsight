@@ -2,19 +2,23 @@ package com.dgomon.systeminsight.presentation.logcat
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -38,14 +42,43 @@ fun LogcatScreen(
     scaffoldViewModel: AppScaffoldViewModel,
     logcatViewModel: LogcatViewModel = hiltViewModel(),
 ) {
-    val logLines by logcatViewModel.logLines.collectAsState()
+    val query by logcatViewModel.query.collectAsState()
+    val filteredLogLines by logcatViewModel.filteredLogLines.collectAsState()
     val isConnected by logcatViewModel.isConnected.collectAsState()
     val state by logcatViewModel.state.collectAsState()
 
     LaunchedEffect(isConnected) {
         scaffoldViewModel.topBarContent.value = {
             TopAppBar(
-                title = { Text(stringResource(R.string.title_logcat)) },
+                title = {
+                    if (isConnected) {
+                        OutlinedTextField(
+                            value = query,
+                            onValueChange = logcatViewModel::setQuery,
+                            placeholder = { Text(stringResource(R.string.filter_logs)) },
+                            singleLine = true,
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = null
+                                )
+                            },
+                            trailingIcon = {
+                                if (query.isNotEmpty()) {
+                                    IconButton(onClick = { logcatViewModel.setQuery("") }) {
+                                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 16.dp)
+                        )
+                    }
+                    else {
+                        Text(stringResource(R.string.title_logcat))
+                    }
+                },
                 actions = {
                     if (isConnected) {
                         IconButton(
@@ -69,14 +102,14 @@ fun LogcatScreen(
                             onClick = {
                                 logcatViewModel.clear()
                             },
-                            enabled = logLines.isNotEmpty()
+                            enabled = filteredLogLines.isNotEmpty()
                         ) {
                             Icon(Icons.Default.Delete, contentDescription = "Share")
                         }
 
                         IconButton(
                             onClick = { logcatViewModel.shareOutput() },
-                            enabled = logLines.isNotEmpty()
+                            enabled = filteredLogLines.isNotEmpty()
                         ) {
                             Icon(Icons.Default.Share, contentDescription = "Share")
                         }
@@ -94,10 +127,10 @@ fun LogcatScreen(
         ) {
             val listState = rememberLazyListState()
 
-            LaunchedEffect(logLines.size) {
+            LaunchedEffect(filteredLogLines.size) {
                 // Scroll to the last item when a new one is added
-                if (logLines.isNotEmpty()) {
-                    listState.scrollToItem(logLines.lastIndex)
+                if (filteredLogLines.isNotEmpty()) {
+                    listState.scrollToItem(filteredLogLines.lastIndex)
                 }
             }
 
@@ -106,7 +139,7 @@ fun LogcatScreen(
                 modifier = modifier
                     .fillMaxSize()
             ) {
-                items(logLines) { line ->
+                items(filteredLogLines) { line ->
                     Text(text = line, style = MaterialTheme.typography.bodyMedium)
                 }
             }
