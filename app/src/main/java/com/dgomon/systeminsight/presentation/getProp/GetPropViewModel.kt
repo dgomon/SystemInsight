@@ -25,7 +25,7 @@ class GetPropViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
 
-    var isSearchActive by mutableStateOf(false)
+    var isSearchActive by mutableStateOf(true)
         private set
 
     fun toggleSearchMode() {

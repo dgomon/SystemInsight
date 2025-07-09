@@ -87,11 +87,6 @@ fun GetPropScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { getPropViewModel.toggleSearchMode() }
-                    ) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
-                    }
-                    IconButton(
                         onClick = { getPropViewModel.shareOutput() },
                         enabled = true
                     ) {
