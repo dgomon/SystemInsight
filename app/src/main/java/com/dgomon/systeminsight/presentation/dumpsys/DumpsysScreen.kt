@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -52,13 +54,12 @@ fun DumpsysScreen(
 
         scaffoldViewModel.topBarContent.value = {
             TopAppBar(
-                title = { Text(stringResource(R.string.title_dumpsys)) },
-                actions = {
+                title = {
                     if (isConnected) {
                         OutlinedTextField(
                             value = query,
                             onValueChange = dumpsysViewModel::setQuery,
-                            label = { Text(stringResource(R.string.search_service)) },
+                            placeholder = { Text(stringResource(R.string.search_service)) },
                             singleLine = true,
                             leadingIcon = {
                                 Icon(
@@ -66,10 +67,20 @@ fun DumpsysScreen(
                                     contentDescription = null
                                 )
                             },
+                            trailingIcon = {
+                                if (query.isNotEmpty()) {
+                                    IconButton(onClick = { dumpsysViewModel.setQuery("") }) {
+                                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                                    }
+                                }
+                            },
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(bottom = 8.dp)
+                                .fillMaxWidth()
+                                .padding(end = 16.dp)
                         )
+                    }
+                    else {
+                        Text(stringResource(R.string.title_dumpsys))
                     }
                 }
             )
@@ -78,7 +89,6 @@ fun DumpsysScreen(
 
     RequirePrivilegedConnection(
         isConnected = isConnected,
-        modifier = modifier
     ) {
         Column(
             modifier = Modifier
