@@ -1,72 +1,96 @@
 package com.dgomon.systeminsight.presentation.getProp
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.presentation.logcat.LogcatState
 import com.dgomon.systeminsight.presentation.navigation.NavigationViewModel
+import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GetPropScreen(
     modifier: Modifier,
-    navigationViewModel: NavigationViewModel,
+    scaffoldViewModel: AppScaffoldViewModel,
     getPropViewModel: GetPropViewModel = hiltViewModel(),
-    onFabContent: ((@Composable () -> Unit) -> Unit),
 ) {
     val props by getPropViewModel.filteredProps.collectAsState()
     val query by getPropViewModel.query.collectAsState()
-
-    val context = LocalContext.current
 
     // Convert to tree
     val root = remember(props) { buildTree(props) }
     val nodes = root.children
 
     LaunchedEffect(Unit) {
-        navigationViewModel.setTitle(context.getString(R.string.title_properties))
 
-        onFabContent {
-            FloatingActionButton(onClick = { getPropViewModel.shareOutput() }) {
-                Icon(Icons.Default.Share, contentDescription = "Share")
-            }
+        scaffoldViewModel.topBarContent.value = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.title_properties)) },
+                actions = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = query,
+                            onValueChange = getPropViewModel::setQuery,
+                            label = { Text(stringResource(R.string.search_property)) },
+                            singleLine = true,
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(bottom = 8.dp)
+                        )
+
+
+                        IconButton(
+                            onClick = { getPropViewModel.shareOutput() },
+                            enabled = true
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = "Share")
+                        }
+                    }
+                }
+            )
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-
-        OutlinedTextField(
-            value = query,
-            onValueChange = getPropViewModel::setQuery,
-            label = { Text(stringResource(R.string.search_property)) },
-            singleLine = true,
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-        )
-
 
         LazyColumn {
             item {

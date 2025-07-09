@@ -2,6 +2,7 @@
     <string name="app_name">System Insight</string>
     <string name="menu">Menu</string>
     <string name="title_logcat">Logcat</string>
+    <string name="title_dumpsys">Dumpsys</string>
     <string name="title_privilege_control">Privilege Control</string>
     <string name="title_properties">Properties</string>
     <string name="dumpsys_no_output_message">No output returned from the system for this service.</string>

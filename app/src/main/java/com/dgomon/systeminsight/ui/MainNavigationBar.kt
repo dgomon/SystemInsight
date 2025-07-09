@@ -32,7 +32,7 @@ fun MainNavigationBar(
     scaffoldViewModel: AppScaffoldViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
-    val startDestination = Destination.LOGCAT
+    val startDestination = Destination.DUMPSYS
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
     val topBarContent by scaffoldViewModel.topBarContent

@@ -7,10 +7,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,26 +24,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysDetailsScreen(
     modifier: Modifier = Modifier,
+    scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
     serviceName: String,
     dumpsysDetailsViewModel: DumpsysDetailsViewModel = hiltViewModel(),
-    onFabContent: ((@Composable () -> Unit) -> Unit)
 ) {
     val output by dumpsysDetailsViewModel.serviceOutput.collectAsState()
 
-    // Update FAB whenever logs change
     LaunchedEffect(output) {
-        if (output.isEmpty()) {
-            onFabContent {} // Clear FAB
-        } else {
-            onFabContent {
-                FloatingActionButton(onClick = { dumpsysDetailsViewModel.shareOutput() }) {
-                    Icon(Icons.Default.Share, contentDescription = "Share")
+        scaffoldViewModel.topBarContent.value = {
+            TopAppBar(
+                title = { Text(serviceName) },
+                actions = {
+                    if (!output.isEmpty()) {
+                        IconButton(
+                            onClick = {
+                                dumpsysDetailsViewModel.shareOutput()
+                            },
+                        ) {
+                            Icon(Icons.Default.Share, contentDescription = "Share")
+                        }
+                    }
                 }
-            }
+            )
         }
     }
 

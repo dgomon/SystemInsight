@@ -52,8 +52,7 @@ fun AppNavHost(
                 when (destination) {
                     Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(
                         modifier,
-                        navigationViewModel = navigationViewModel,
-                        onFabContent = onFabChanged
+                        scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.LOGCAT -> LogcatScreen(
                         modifier,
@@ -61,15 +60,13 @@ fun AppNavHost(
                     )
                     Destination.GETPROP -> GetPropScreen(
                         modifier,
-                        navigationViewModel = navigationViewModel,
-                        onFabContent = onFabChanged
+                        scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.DUMPSYS -> DumpsysScreen(
                         onServiceClick = { serviceName ->
                             navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
                         },
-                        navigationViewModel = navigationViewModel,
-                        onFabContent = onFabChanged
+                        scaffoldViewModel = scaffoldViewModel,
                     )
                 }
             }
@@ -83,7 +80,7 @@ fun AppNavHost(
             val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
             DumpsysDetailsScreen(
                 serviceName = serviceName,
-                onFabContent = onFabChanged
+                scaffoldViewModel = scaffoldViewModel,
             )
         }
     }
