@@ -1,5 +1,13 @@
 package com.dgomon.systeminsight.presentation.getProp
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun GetPropScreen(
     modifier: Modifier,
@@ -37,7 +46,6 @@ fun GetPropScreen(
 ) {
     val props by getPropViewModel.filteredProps.collectAsState()
     val query by getPropViewModel.query.collectAsState()
-    val isSearchActive by getPropViewModel.isSearchActive.collectAsState()
 
     // Convert to tree
     val root = remember(props) { buildTree(props) }
@@ -47,42 +55,51 @@ fun GetPropScreen(
         scaffoldViewModel.topBarContent.value = {
             TopAppBar(
                 title = {
-                    if (isSearchActive) {
-                        OutlinedTextField(
-                            value = query,
-                            onValueChange = getPropViewModel::setQuery,
-                            placeholder = { Text(stringResource(R.string.search_property)) },
-                            singleLine = true,
-                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                            trailingIcon = {
-                                if (query.isNotEmpty()) {
-                                    IconButton(onClick = { getPropViewModel.setQuery("") }) {
-                                        Icon(Icons.Default.Close, contentDescription = "Clear")
+                    AnimatedContent(
+                        targetState = getPropViewModel.isSearchActive,
+                        transitionSpec = {
+                            (slideInHorizontally(animationSpec = tween(300)) { it } + fadeIn()) with
+                                    (slideOutHorizontally(animationSpec = tween(300)) { it } + fadeOut())                        },
+                        label = "SearchBarTransition"
+                    ) { isSearch ->
+                        if (isSearch) {
+                            OutlinedTextField(
+                                value = query,
+                                onValueChange = getPropViewModel::setQuery,
+                                placeholder = { Text(stringResource(R.string.search_property)) },
+                                singleLine = true,
+                                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                                trailingIcon = {
+                                    if (query.isNotEmpty()) {
+                                        IconButton(onClick = { getPropViewModel.setQuery("") }) {
+                                            Icon(Icons.Default.Close, contentDescription = "Clear")
+                                        }
                                     }
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 56.dp) // Ensure it fits well in the TopAppBar
-                        )
-                    } else {
-                        Text(stringResource(R.string.title_properties))
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 56.dp)
+                            )
+                        } else {
+                            Text(stringResource(R.string.title_properties))
+                        }
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = { getPropViewModel.shareOutput() },
-                        enabled = true
-                    ) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
-                    }
                     IconButton(
                         onClick = { getPropViewModel.toggleSearchMode() }
                     ) {
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
+                    IconButton(
+                        onClick = { getPropViewModel.shareOutput() },
+                        enabled = true
+                    ) {
+                        Icon(Icons.Default.Save, contentDescription = "Save")
+                    }
                 }
             )
+
         }
     }
 
