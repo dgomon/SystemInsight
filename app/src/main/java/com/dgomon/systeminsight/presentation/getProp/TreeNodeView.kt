@@ -25,6 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -49,9 +51,20 @@ fun TreeNodeView(
                 .animateContentSize()
         ) {
             if (node.children.isEmpty()) {
-                Text(text = node.name)
+                Text(
+                    text = node.name,
+                    modifier = Modifier.weight(5f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = node.value ?: "")
+                Text(
+                    text = node.value ?: "",
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.End
+                )
             } else {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowRight,

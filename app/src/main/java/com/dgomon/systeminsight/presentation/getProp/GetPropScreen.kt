@@ -102,7 +102,6 @@ fun GetPropScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-
         LazyColumn {
             item {
                 Column {
