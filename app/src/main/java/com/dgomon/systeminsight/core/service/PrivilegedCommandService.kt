@@ -70,7 +70,7 @@ class PrivilegedCommandService : IPrivilegedCommandService.Stub {
 
         logcatJob = CoroutineScope(Dispatchers.IO).launch {
             try {
-                process = Runtime.getRuntime().exec("logcat -T 0")
+                process = Runtime.getRuntime().exec("logcat -T 0 --format=threadtime")
 
                 process?.inputStream?.bufferedReader()?.useLines { lines ->
                     lines.forEach { line ->

@@ -8,6 +8,7 @@
     <string name="dumpsys_no_output_message">No output returned from the system for this service.</string>
     <string name="loading_services">Loading services…</string>
     <string name="search_service">Search service</string>
+    <string name="filter_logs">Filter logs</string>
     <string name="share_file">Share file</string>
     <string name="search_property">Search property</string>
 </resources>
