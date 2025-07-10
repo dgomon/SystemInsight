@@ -38,8 +38,8 @@ import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 @Preview
 @Composable
 fun LogcatScreen(
-    modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel,
+    modifier: Modifier = Modifier,
     logcatViewModel: LogcatViewModel = hiltViewModel(),
 ) {
     val query by logcatViewModel.query.collectAsState()
@@ -119,7 +119,7 @@ fun LogcatScreen(
         }
     }
 
-    RequirePrivilegedConnection(isConnected = isConnected, modifier = modifier) {
+    RequirePrivilegedConnection(isConnected = isConnected, modifier = modifier, content = {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,5 +144,5 @@ fun LogcatScreen(
                 }
             }
         }
-    }
+    })
 }

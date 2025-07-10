@@ -37,10 +37,10 @@ import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysScreen(
-    modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
     privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
     onServiceClick: (String) -> Unit,
 ) {
     val query by dumpsysViewModel.query.collectAsState()
@@ -89,43 +89,44 @@ fun DumpsysScreen(
 
     RequirePrivilegedConnection(
         isConnected = isConnected,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            if (services.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(R.string.loading_services),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(services) { service ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .clickable { onServiceClick(service) }
-                                .padding(horizontal = 8.dp),
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            Text(
-                                text = service,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                if (services.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.loading_services),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(services) { service ->
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .clickable { onServiceClick(service) }
+                                    .padding(horizontal = 8.dp),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Text(
+                                    text = service,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
                 }
             }
-        }
-    }
+        },
+    )
 }

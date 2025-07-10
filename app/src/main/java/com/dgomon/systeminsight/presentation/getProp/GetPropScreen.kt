@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,8 +39,8 @@ import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun GetPropScreen(
-    modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel,
+    modifier: Modifier = Modifier,
     getPropViewModel: GetPropViewModel = hiltViewModel(),
 ) {
     val props by getPropViewModel.filteredProps.collectAsState()

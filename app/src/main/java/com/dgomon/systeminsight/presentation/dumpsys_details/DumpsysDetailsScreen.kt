@@ -29,9 +29,9 @@ import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysDetailsScreen(
+    serviceName: String,
     modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
-    serviceName: String,
     dumpsysDetailsViewModel: DumpsysDetailsViewModel = hiltViewModel(),
 ) {
     val output by dumpsysDetailsViewModel.serviceOutput.collectAsState()

@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun RequirePrivilegedConnection(
-    modifier: Modifier = Modifier,
     isConnected: Boolean,
+    modifier: Modifier = Modifier,
     fallbackMessage: String = "Waiting for privileged connection...",
     content: @Composable () -> Unit
 ) {

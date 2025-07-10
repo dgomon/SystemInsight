@@ -33,9 +33,9 @@ enum class Destination(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: Destination,
+    modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
 ) {
     NavHost(
@@ -57,11 +57,10 @@ fun AppNavHost(
                         scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.DUMPSYS -> DumpsysScreen(
-                        onServiceClick = { serviceName ->
-                            navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
-                        },
                         scaffoldViewModel = scaffoldViewModel,
-                    )
+                    ) { serviceName ->
+                        navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
+                    }
                 }
             }
         }
