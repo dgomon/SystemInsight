@@ -73,6 +73,7 @@ fun AppNavHost(
             val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
             DumpsysDetailsScreen(
                 serviceName = serviceName,
+                navController = navController,
                 scaffoldViewModel = scaffoldViewModel,
             )
         }

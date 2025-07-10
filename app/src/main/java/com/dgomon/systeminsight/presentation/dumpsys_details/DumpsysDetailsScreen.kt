@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
@@ -30,6 +32,7 @@ import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 @Composable
 fun DumpsysDetailsScreen(
     serviceName: String,
+    navController: NavController,
     modifier: Modifier = Modifier,
     scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
     dumpsysDetailsViewModel: DumpsysDetailsViewModel = hiltViewModel(),
@@ -40,6 +43,11 @@ fun DumpsysDetailsScreen(
         scaffoldViewModel.topBarContent.value = {
             TopAppBar(
                 title = { Text(serviceName) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
                 actions = {
                     if (!output.isEmpty()) {
                         IconButton(
