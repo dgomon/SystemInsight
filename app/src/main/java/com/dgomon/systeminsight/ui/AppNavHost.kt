@@ -55,7 +55,7 @@ fun AppNavHost(
                     )
                     Destination.LOGCAT -> LogcatScreen(
                         scaffoldViewModel = scaffoldViewModel,
-W                        navBackStackEntry = backStackEntry,
+                        navBackStackEntry = backStackEntry,
                         logcatViewModel = hiltViewModel(backStackEntry)
                     )
                     Destination.GETPROP -> GetPropScreen(
