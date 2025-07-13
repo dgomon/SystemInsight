@@ -46,8 +46,12 @@ fun LogcatScreen(
     val query by logcatViewModel.query.collectAsState()
     val filteredLogLines by logcatViewModel.filteredLogLines.collectAsState()
     val isConnected by logcatViewModel.isConnected.collectAsState()
-    val state by logcatViewModel.state.collectAsState()
+    val state by logcatViewModel.logcatState.collectAsState()
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        logcatViewModel.onScreenVisible(true)
+    }
 
     LaunchedEffect(isConnected) {
         scaffoldViewModel.topBarContent.value = {
@@ -89,10 +93,10 @@ fun LogcatScreen(
                     if (isConnected) {
                         IconButton(
                             onClick = {
-                                if (state == LogcatState.Idle) {
-                                    logcatViewModel.resumeCapture()
+                                if (state in setOf(LogcatState.Init, LogcatState.Idle)) {
+                                    logcatViewModel.onResumeCapture()
                                 } else {
-                                    logcatViewModel.pauseCapture()
+                                    logcatViewModel.onPauseCapture()
                                 }
                             },
                             enabled = true

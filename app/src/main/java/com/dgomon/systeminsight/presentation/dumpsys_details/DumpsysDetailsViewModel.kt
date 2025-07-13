@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -22,7 +23,7 @@ class DumpsysDetailsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _serviceOutput = MutableStateFlow("")
-    val serviceOutput: StateFlow<String> = _serviceOutput
+    val serviceOutput: StateFlow<String> = _serviceOutput.asStateFlow()
 
     private val serviceName = URLDecoder.decode(
         checkNotNull(savedStateHandle["serviceName"]),

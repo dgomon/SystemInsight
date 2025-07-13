@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class GetPropViewModel @Inject constructor(
     private val shareManager: ShareManager
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
-    val query: StateFlow<String> = _query
+    val query: StateFlow<String> = _query.asStateFlow()
 
     var isSearchActive by mutableStateOf(true)
         private set
