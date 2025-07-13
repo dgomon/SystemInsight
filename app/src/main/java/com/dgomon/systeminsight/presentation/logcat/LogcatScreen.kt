@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
@@ -40,8 +41,9 @@ import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 @Composable
 fun LogcatScreen(
     scaffoldViewModel: AppScaffoldViewModel,
+    navBackStackEntry: NavBackStackEntry,
     modifier: Modifier = Modifier,
-    logcatViewModel: LogcatViewModel = hiltViewModel(),
+    logcatViewModel: LogcatViewModel = hiltViewModel(navBackStackEntry),
 ) {
     val query by logcatViewModel.query.collectAsState()
     val filteredLogLines by logcatViewModel.filteredLogLines.collectAsState()
@@ -50,7 +52,7 @@ fun LogcatScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        logcatViewModel.onScreenVisible(true)
+        logcatViewModel.onScreenCreated(true)
     }
 
     LaunchedEffect(isConnected) {
@@ -93,18 +95,21 @@ fun LogcatScreen(
                     if (isConnected) {
                         IconButton(
                             onClick = {
-                                if (state in setOf(LogcatState.Init, LogcatState.Idle)) {
-                                    logcatViewModel.onResumeCapture()
+                                if (state == LogcatState.Paused) {
+                                    logcatViewModel.resumeCapture()
                                 } else {
-                                    logcatViewModel.onPauseCapture()
+                                    logcatViewModel.pauseCapture()
                                 }
                             },
                             enabled = true
                         ) {
                             Icon(
-                                imageVector = if (state == LogcatState.Idle) Icons.Default.PlayArrow else
-                                    Icons.Default.Pause,
-                                contentDescription = "Share",
+                                imageVector =
+                                    if (state == LogcatState.Resumed)
+                                        Icons.Default.Pause
+                                    else
+                                        Icons.Default.PlayArrow,
+                                contentDescription = "Collect or pause",
                             )
                         }
 

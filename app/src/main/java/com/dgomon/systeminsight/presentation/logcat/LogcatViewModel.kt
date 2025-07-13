@@ -21,9 +21,8 @@ import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 enum class LogcatState {
-    Init,
-    Idle,
-    Collecting,
+    Resumed,     // Logs arrive, callback called
+    Paused,      // Logs arrive, callback not called
 }
 
 @HiltViewModel
@@ -31,8 +30,8 @@ class LogcatViewModel @Inject constructor(
     private val serviceConnectionProvider: PrivilegedServiceConnectionProvider,
     private val shareManager: ShareManager
 ) : ViewModel() {
-
     companion object {
+        private const val TAG = "LogViewModel"
         private const val LOG_BUFFER_CAPACITY = 20000
         private const val LOG_DISPLAY_CAPACITY = 100
     }
@@ -46,24 +45,32 @@ class LogcatViewModel @Inject constructor(
     private val logMutex = Mutex()
     val isConnected: StateFlow<Boolean> = serviceConnectionProvider.isConnected
 
-    private val _logcatState = MutableStateFlow(LogcatState.Init)
+    private val _logcatState = MutableStateFlow(LogcatState.Paused)
     val logcatState: StateFlow<LogcatState> = _logcatState.asStateFlow()
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
-    private val _isScreenVisible = MutableStateFlow(false)
+    private val _isScreenCreated = MutableStateFlow(false)
 
     init {
+        Log.d("LogcatViewModel", "init called: instance=${this.hashCode()}")
+
         viewModelScope.launch {
-            combine(isConnected, _isScreenVisible, _logcatState) {
-                                                           connected, visible, state ->
-                connected && visible && (state in setOf(LogcatState.Init, LogcatState.Collecting) )
-            }.distinctUntilChanged().collect { shouldCapture ->
-                if (shouldCapture) {
-                    resumeCapture()
+            isConnected
+                .collect { connected ->
+                if (connected) {
+                    startCapture()
                 } else {
-                    pauseCapture()
+                    Log.w(TAG, "Disconnected")
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            _isScreenCreated.collect { created ->
+                if (created) {
+                    resumeCapture()
                 }
             }
         }
@@ -81,7 +88,7 @@ class LogcatViewModel @Inject constructor(
 
     private val logCallback = object : ILogCallback.Stub() {
         override fun onLogLine(line: String) {
-            if (_logcatState.value == LogcatState.Collecting) {
+            if (_logcatState.value == LogcatState.Resumed) {
                 viewModelScope.launch {
                     appendToBuffer(line)
                 }
@@ -89,22 +96,23 @@ class LogcatViewModel @Inject constructor(
         }
     }
 
-    fun onScreenVisible(visible: Boolean) {
-        _isScreenVisible.value = visible
+    fun onScreenCreated(isCreated: Boolean) {
+        _isScreenCreated.value = isCreated
     }
 
-    fun onResumeCapture() {
-        _logcatState.value = LogcatState.Collecting
+    fun resumeCapture() {
+        _logcatState.value = LogcatState.Resumed
     }
 
-    fun onPauseCapture() {
-        _logcatState.value = LogcatState.Idle
+    fun pauseCapture() {
+        _logcatState.value = LogcatState.Paused
     }
 
     fun setQuery(newQuery: String) {
         _query.value = newQuery
     }
-    fun resumeCapture() {
+
+    fun startCapture() {
         try {
             serviceConnectionProvider.getService()?.startLogging(logCallback)
         } catch (e: RemoteException) {
@@ -112,7 +120,7 @@ class LogcatViewModel @Inject constructor(
         }
     }
 
-    fun pauseCapture() {
+    fun stopCapture() {
         try {
             serviceConnectionProvider.getService()?.stopLogging()
         } catch (e: RemoteException) {
@@ -144,7 +152,7 @@ class LogcatViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        pauseCapture()
+        stopCapture()
         super.onCleared()
     }
 }

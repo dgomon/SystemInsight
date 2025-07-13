@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
@@ -45,7 +46,19 @@ fun MainNavigationBar(
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
-                            navController.navigate(route = destination.route)
+                            navController.navigate(route = destination.route) {
+                                // Pop up to the start destination of the graph to
+                                // avoid building up a large stack of destinations
+                                // on the back stack as users select items
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                // Avoid multiple copies of the same destination when
+                                // reselecting the same item
+                                launchSingleTop = true
+                                // Restore state when reselecting a previously selected item
+                                restoreState = true
+                            }
                             selectedDestination = index
                         },
                         icon = {

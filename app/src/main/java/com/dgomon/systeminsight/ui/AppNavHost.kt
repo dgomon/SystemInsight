@@ -1,5 +1,6 @@
 package com.dgomon.systeminsight.ui
 
+import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -45,13 +46,17 @@ fun AppNavHost(
     ) {
         // Static routes from Destination enum
         Destination.entries.forEach { destination ->
-            composable(destination.route) {
+            composable(destination.route) { backStackEntry ->
+                Log.d("AppNavHost", "[$destination] backStackEntry=$backStackEntry hash=${backStackEntry.hashCode()}")
+
                 when (destination) {
                     Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(
                         scaffoldViewModel = scaffoldViewModel,
                     )
                     Destination.LOGCAT -> LogcatScreen(
                         scaffoldViewModel = scaffoldViewModel,
+W                        navBackStackEntry = backStackEntry,
+                        logcatViewModel = hiltViewModel(backStackEntry)
                     )
                     Destination.GETPROP -> GetPropScreen(
                         scaffoldViewModel = scaffoldViewModel,
