@@ -23,11 +23,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.dgomon.systeminsight.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogcatTopBar(logcatViewModel: LogcatViewModel = hiltViewModel()) {
+fun LogcatTopBar(
+    navBackStackEntry: NavBackStackEntry,
+    logcatViewModel: LogcatViewModel = hiltViewModel(navBackStackEntry)
+) {
     val query by logcatViewModel.query.collectAsState()
     val isConnected by logcatViewModel.isConnected.collectAsState()
     val focusManager = LocalFocusManager.current

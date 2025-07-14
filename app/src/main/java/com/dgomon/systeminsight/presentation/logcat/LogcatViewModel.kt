@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -53,6 +52,26 @@ class LogcatViewModel @Inject constructor(
 
     private val _isScreenCreated = MutableStateFlow(false)
 
+    // Combine query and services to emit filtered results
+    val filteredLogLines: StateFlow<List<String>> = combine(_query, _logLines) { query, logLine ->
+        if (query.isBlank()) logLine
+        else logLine.filter { it.contains(query, ignoreCase = true) }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    private val logCallback = object : ILogCallback.Stub() {
+        override fun onLogLine(line: String) {
+            if (_logcatState.value == LogcatState.Resumed) {
+                viewModelScope.launch {
+                    appendToBuffer(line)
+                }
+            }
+        }
+    }
+
     init {
         Log.d("LogcatViewModel", "init called: instance=${this.hashCode()}")
 
@@ -71,26 +90,6 @@ class LogcatViewModel @Inject constructor(
             _isScreenCreated.collect { created ->
                 if (created) {
                     resumeCapture()
-                }
-            }
-        }
-    }
-
-    // Combine query and services to emit filtered results
-    val filteredLogLines: StateFlow<List<String>> = combine(_query, _logLines) { query, logLine ->
-        if (query.isBlank()) logLine
-        else logLine.filter { it.contains(query, ignoreCase = true) }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
-    )
-
-    private val logCallback = object : ILogCallback.Stub() {
-        override fun onLogLine(line: String) {
-            if (_logcatState.value == LogcatState.Resumed) {
-                viewModelScope.launch {
-                    appendToBuffer(line)
                 }
             }
         }
