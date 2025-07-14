@@ -50,20 +50,13 @@ fun AppNavHost(
                 Log.d("AppNavHost", "[$destination] backStackEntry=$backStackEntry hash=${backStackEntry.hashCode()}")
 
                 when (destination) {
-                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen(
-                        scaffoldViewModel = scaffoldViewModel,
-                    )
+                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen()
                     Destination.LOGCAT -> LogcatScreen(
-                        scaffoldViewModel = scaffoldViewModel,
                         navBackStackEntry = backStackEntry,
                         logcatViewModel = hiltViewModel(backStackEntry)
                     )
-                    Destination.GETPROP -> GetPropScreen(
-                        scaffoldViewModel = scaffoldViewModel,
-                    )
-                    Destination.DUMPSYS -> DumpsysScreen(
-                        scaffoldViewModel = scaffoldViewModel,
-                    ) { serviceName ->
+                    Destination.GETPROP -> GetPropScreen()
+                    Destination.DUMPSYS -> DumpsysScreen { serviceName ->
                         navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
                     }
                 }

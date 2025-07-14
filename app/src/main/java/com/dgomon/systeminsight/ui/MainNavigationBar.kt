@@ -21,7 +21,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.dgomon.systeminsight.presentation.dumpsys.DumpsysTopBar
+import com.dgomon.systeminsight.presentation.getProp.GetPropTopBar
+import com.dgomon.systeminsight.presentation.logcat.LogcatTopBar
+import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlTopBar
 import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +38,15 @@ fun MainNavigationBar(
     val startDestination = Destination.LOGCAT
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
-    val topBarContent by scaffoldViewModel.topBarContent
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val topBarContent = when (navBackStackEntry?.destination?.route) {
+        Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
+        Destination.LOGCAT.route -> { @Composable { LogcatTopBar() } }
+        Destination.GETPROP.route -> { { GetPropTopBar() } }
+        Destination.DUMPSYS.route -> { { DumpsysTopBar() } }
+        else -> null
+    }
+
     var fabContent by remember { mutableStateOf<@Composable () -> Unit>({}) }
 
     Scaffold(

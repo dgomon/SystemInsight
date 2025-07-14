@@ -37,10 +37,9 @@ import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysScreen(
-    scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
     privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier,
     onServiceClick: (String) -> Unit,
 ) {
     val query by dumpsysViewModel.query.collectAsState()
@@ -50,40 +49,6 @@ fun DumpsysScreen(
     LaunchedEffect(isConnected) {
         if (isConnected) {
             dumpsysViewModel.loadServices()
-        }
-
-        scaffoldViewModel.topBarContent.value = {
-            TopAppBar(
-                title = {
-                    if (isConnected) {
-                        OutlinedTextField(
-                            value = query,
-                            onValueChange = dumpsysViewModel::setQuery,
-                            placeholder = { Text(stringResource(R.string.search_service)) },
-                            singleLine = true,
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Search,
-                                    contentDescription = null
-                                )
-                            },
-                            trailingIcon = {
-                                if (query.isNotEmpty()) {
-                                    IconButton(onClick = { dumpsysViewModel.setQuery("") }) {
-                                        Icon(Icons.Default.Close, contentDescription = "Clear")
-                                    }
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 16.dp)
-                        )
-                    }
-                    else {
-                        Text(stringResource(R.string.title_dumpsys))
-                    }
-                }
-            )
         }
     }
 
