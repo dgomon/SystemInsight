@@ -70,6 +70,13 @@ fun AppNavHost(
             }
         }
 
+        composable(
+            route = Destination.PRIVILEGE_CONTROL.route,
+            content = {
+                PrivilegeControlScreen()
+            }
+        )
+
         // Dynamic route for dumpsys details
         composable(
             route = DynamicRoutes.DumpsysDetailsWithArg,

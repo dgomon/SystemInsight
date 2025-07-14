@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,13 +27,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
+import com.dgomon.systeminsight.ui.common.CommonTopBar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun GetPropTopBar(getPropViewModel: GetPropViewModel = hiltViewModel()) {
     val query by getPropViewModel.query.collectAsState()
 
-    TopAppBar(
+    CommonTopBar(
         title = {
             AnimatedContent(
                 targetState = getPropViewModel.isSearchActive,
@@ -66,6 +66,13 @@ fun GetPropTopBar(getPropViewModel: GetPropViewModel = hiltViewModel()) {
                 }
             }
         },
+        showMenu = true,
+        menuItems = listOf(
+            "Control Screen" to {
+//                navController.navigate("control")
+            },
+            "Settings" to { /* TODO */ }
+        ),
         actions = {
             IconButton(
                 onClick = { getPropViewModel.shareOutput() },

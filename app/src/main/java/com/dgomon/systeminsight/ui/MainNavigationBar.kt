@@ -35,15 +35,15 @@ import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
 @Composable
 fun MainNavigationBar() {
     val navController = rememberNavController()
-    val startDestination = Destination.PRIVILEGE_CONTROL
+    val startDestination = Destination.LOGCAT
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     
     val topBarContent = when {
-        currentRoute == Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
-        currentRoute == Destination.LOGCAT.route -> { { LogcatTopBar(navBackStackEntry = navBackStackEntry!!) } }
+//        currentRoute == Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
+        currentRoute == Destination.LOGCAT.route -> { @Composable { LogcatTopBar(navBackStackEntry = navBackStackEntry!!) } }
         currentRoute == Destination.GETPROP.route -> { { GetPropTopBar() } }
         currentRoute == Destination.DUMPSYS.route -> { { DumpsysTopBar() } }
         currentRoute?.matchesRoute(DynamicRoutes.DumpsysDetailsWithArg) == true -> {
