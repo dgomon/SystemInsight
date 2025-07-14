@@ -3,6 +3,7 @@ package com.dgomon.systeminsight.ui
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -13,11 +14,18 @@ import androidx.navigation.navArgument
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
+import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewModel
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
-import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
+
+fun String.matchesRoute(routePattern: String): Boolean {
+    val regex = routePattern
+        .replace("{serviceName}", "[^/]+")
+        .toRegex()
+    return this.matches(regex)
+}
 
 enum class Destination(
     val route: String,
@@ -37,7 +45,6 @@ fun AppNavHost(
     navController: NavHostController,
     startDestination: Destination,
     modifier: Modifier = Modifier,
-    scaffoldViewModel: AppScaffoldViewModel = hiltViewModel(),
 ) {
     NavHost(
         navController = navController,
@@ -66,13 +73,21 @@ fun AppNavHost(
         // Dynamic route for dumpsys details
         composable(
             route = DynamicRoutes.DumpsysDetailsWithArg,
-            arguments = listOf(navArgument("serviceName") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("serviceName") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
         ) { backStackEntry ->
-            val serviceName = backStackEntry.arguments?.getString("serviceName") ?: ""
+            val viewModel: DumpsysDetailsViewModel = hiltViewModel(backStackEntry)
+
+            LaunchedEffect(Unit) {
+                Log.d("ARGS", "backStackEntry.arguments: ${backStackEntry.arguments}")
+            }
+
             DumpsysDetailsScreen(
-                serviceName = serviceName,
-                navController = navController,
-                scaffoldViewModel = scaffoldViewModel,
+                dumpsysDetailsViewModel = viewModel,
             )
         }
     }

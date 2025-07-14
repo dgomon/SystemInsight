@@ -24,26 +24,35 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysTopBar
+import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsTopBar
+import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewModel
 import com.dgomon.systeminsight.presentation.getProp.GetPropTopBar
 import com.dgomon.systeminsight.presentation.logcat.LogcatTopBar
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlTopBar
-import com.dgomon.systeminsight.presentation.scaffold.AppScaffoldViewModel
+import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainNavigationBar(
-    scaffoldViewModel: AppScaffoldViewModel = hiltViewModel()
-) {
+fun MainNavigationBar() {
     val navController = rememberNavController()
-    val startDestination = Destination.LOGCAT
+    val startDestination = Destination.DUMPSYS
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val topBarContent = when (navBackStackEntry?.destination?.route) {
-        Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
-        Destination.LOGCAT.route -> { @Composable { LogcatTopBar() } }
-        Destination.GETPROP.route -> { { GetPropTopBar() } }
-        Destination.DUMPSYS.route -> { { DumpsysTopBar() } }
+    val currentRoute = navBackStackEntry?.destination?.route
+    
+    val topBarContent = when {
+        currentRoute == Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
+        currentRoute == Destination.LOGCAT.route -> { @Composable { LogcatTopBar() } }
+        currentRoute == Destination.GETPROP.route -> { { GetPropTopBar() } }
+        currentRoute == Destination.DUMPSYS.route -> { { DumpsysTopBar() } }
+        currentRoute?.matchesRoute(DynamicRoutes.DumpsysDetailsWithArg) == true -> {
+            {
+                val viewModel = hiltViewModel<DumpsysDetailsViewModel>(navBackStackEntry!!)
+                DumpsysDetailsTopBar(navController, viewModel)
+            }  // or pass args if needed
+        }
+
         else -> null
     }
 
@@ -91,7 +100,6 @@ fun MainNavigationBar(
             navController,
             startDestination,
             Modifier.padding(contentPadding),
-            scaffoldViewModel = scaffoldViewModel,
         )
     }
 }

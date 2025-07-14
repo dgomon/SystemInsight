@@ -25,7 +25,7 @@ class DumpsysDetailsViewModel @Inject constructor(
     private val _serviceOutput = MutableStateFlow("")
     val serviceOutput: StateFlow<String> = _serviceOutput.asStateFlow()
 
-    private val serviceName = URLDecoder.decode(
+    val serviceName: String = URLDecoder.decode(
         checkNotNull(savedStateHandle["serviceName"]),
         StandardCharsets.UTF_8.toString()
     )
