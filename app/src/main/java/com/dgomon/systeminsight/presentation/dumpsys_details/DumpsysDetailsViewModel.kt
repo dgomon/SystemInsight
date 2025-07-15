@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.core.service.CommandServiceClient
 import com.dgomon.systeminsight.core.share.ShareManager
+import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes.SERVICE_NAME_ARG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +27,7 @@ class DumpsysDetailsViewModel @Inject constructor(
     val serviceOutput: StateFlow<String> = _serviceOutput.asStateFlow()
 
     val serviceName: String = URLDecoder.decode(
-        checkNotNull(savedStateHandle["serviceName"]),
+        checkNotNull(savedStateHandle[SERVICE_NAME_ARG]),
         StandardCharsets.UTF_8.toString()
     )
 

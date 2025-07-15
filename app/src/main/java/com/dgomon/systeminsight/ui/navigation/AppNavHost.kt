@@ -17,6 +17,7 @@ import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
 import com.dgomon.systeminsight.presentation.privilege_control.SettingsScreen
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
+import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes.SERVICE_NAME_ARG
 
 fun String.matchesRoute(routePattern: String): Boolean {
     val regex = routePattern
@@ -63,7 +64,7 @@ fun AppNavHost(
         composable(
             route = DynamicRoutes.DumpsysDetailsWithArg,
             arguments = listOf(
-                navArgument("serviceName") {
+                navArgument(SERVICE_NAME_ARG) {
                     type = NavType.StringType
                     nullable = false
                 }
