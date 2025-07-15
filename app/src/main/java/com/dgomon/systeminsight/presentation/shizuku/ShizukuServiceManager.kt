@@ -82,6 +82,25 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
         _status.value = Dead
     }
 
+    private val userServiceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(componentName: ComponentName, binder: IBinder?) {
+            Log.d(TAG, "onServiceConnected: $componentName $binder")
+            if (binder?.pingBinder() == true) {
+                privilegedCommandService = IPrivilegedCommandService.Stub.asInterface(binder)
+                _status.value = Connected
+            } else {
+                Log.e(TAG, "Service connected but ping failed")
+            }
+        }
+
+        override fun onServiceDisconnected(componentName: ComponentName) {
+            Log.d(TAG, "Service disconnected: $componentName")
+
+            privilegedCommandService = null
+            _status.value = Disconnected
+        }
+    }
+
     init {
         _status.value = Disconnected
         Shizuku.addBinderReceivedListenerSticky(onBinderReceivedListener)
@@ -109,25 +128,6 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
             Log.e(TAG, "Failed to check permission", e)
             _status.value = Error
             false
-        }
-    }
-
-    private val userServiceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(componentName: ComponentName, binder: IBinder?) {
-            Log.d(TAG, "onServiceConnected: $componentName $binder")
-            if (binder?.pingBinder() == true) {
-                privilegedCommandService = IPrivilegedCommandService.Stub.asInterface(binder)
-                _status.value = Connected
-            } else {
-                Log.e(TAG, "Service connected but ping failed")
-            }
-        }
-
-        override fun onServiceDisconnected(componentName: ComponentName) {
-            Log.d(TAG, "Service disconnected: $componentName")
-
-            privilegedCommandService = null
-            _status.value = Disconnected
         }
     }
 
