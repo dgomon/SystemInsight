@@ -42,10 +42,14 @@ fun MainNavigationBar() {
     val currentRoute = navBackStackEntry?.destination?.route
     
     val topBarContent = when {
-//        currentRoute == Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
-        currentRoute == Destination.Logcat.route -> { @Composable { LogcatTopBar(navBackStackEntry = navBackStackEntry!!) } }
-        currentRoute == Destination.Getprop.route -> { { GetPropTopBar() } }
-        currentRoute == Destination.Dumpsys.route -> { { DumpsysTopBar() } }
+        currentRoute == Destination.Logcat.route -> {
+            @Composable { LogcatTopBar(
+                navBackStackEntry = navBackStackEntry!!,
+                navController = navController
+            ) }
+        }
+        currentRoute == Destination.Getprop.route -> { { GetPropTopBar(navController) } }
+        currentRoute == Destination.Dumpsys.route -> { { DumpsysTopBar(navController) } }
         currentRoute?.matchesRoute(DynamicRoutes.DumpsysDetailsWithArg) == true -> {
             {
                 val viewModel = hiltViewModel<DumpsysDetailsViewModel>(navBackStackEntry!!)

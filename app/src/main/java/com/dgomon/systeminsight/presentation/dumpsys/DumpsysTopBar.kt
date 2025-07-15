@@ -10,7 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
 import com.dgomon.systeminsight.ui.common.CommonTopBar
@@ -25,6 +25,7 @@ import com.dgomon.systeminsight.ui.common.CommonTopBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysTopBar(
+    navController: NavController,
     privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel()
 ) {
@@ -63,10 +64,9 @@ fun DumpsysTopBar(
         },
         showMenu = true,
         menuItems = listOf(
-            "Control Screen" to {
-//                navController.navigate("control")
-            },
-            "Settings" to { /* TODO */ }
+            stringResource(R.string.settings) to {
+                navController.navigate(Destination.Settings.route)
+            }
         ),
     )
 }

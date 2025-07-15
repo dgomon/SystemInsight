@@ -26,12 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.ui.common.CommonTopBar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun GetPropTopBar(getPropViewModel: GetPropViewModel = hiltViewModel()) {
+fun GetPropTopBar(navController: NavController, getPropViewModel: GetPropViewModel = hiltViewModel()) {
     val query by getPropViewModel.query.collectAsState()
 
     CommonTopBar(
@@ -68,10 +69,9 @@ fun GetPropTopBar(getPropViewModel: GetPropViewModel = hiltViewModel()) {
         },
         showMenu = true,
         menuItems = listOf(
-            "Control Screen" to {
-//                navController.navigate("control")
-            },
-            "Settings" to { /* TODO */ }
+            stringResource(R.string.settings) to {
+                navController.navigate(Destination.Settings.route)
+            }
         ),
         actions = {
             IconButton(
