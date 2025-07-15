@@ -61,33 +61,36 @@ fun MainNavigationBar() {
     }
 
     var fabContent by remember { mutableStateOf<@Composable () -> Unit>({}) }
+    val shouldShowBottomBar = currentRoute in bottomBarDestinations.map { it.route }
 
     Scaffold(
         topBar = {
             topBarContent?.invoke() ?: TopAppBar(title = { Text("Default") })
         },
         bottomBar = {
-            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                bottomBarDestinations.forEach { destination ->
-                    NavigationBarItem(
-                        selected = currentRoute == destination.route,
-                        onClick = {
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
+            if (shouldShowBottomBar) {
+                NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
+                    bottomBarDestinations.forEach { destination ->
+                        NavigationBarItem(
+                            selected = currentRoute == destination.route,
+                            onClick = {
+                                navController.navigate(destination.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = destination.iconResId),
-                                contentDescription = destination.contentDescription
-                            )
-                        },
-                        label = { Text(destination.label) }
-                    )
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = destination.iconResId),
+                                    contentDescription = destination.contentDescription
+                                )
+                            },
+                            label = { Text(destination.label) }
+                        )
+                    }
                 }
             }
         },
