@@ -23,14 +23,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
-import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
+import com.dgomon.systeminsight.presentation.settings.SettingsViewModel
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysScreen(
     modifier: Modifier = Modifier,
-    privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
+    privilegeViewModel: SettingsViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
     onServiceClick: (String) -> Unit,
 ) {

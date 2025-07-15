@@ -22,27 +22,26 @@ fun DumpsysDetailsTopBar(
     dumpsysDetailsViewModel: DumpsysDetailsViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
-
     val output by dumpsysDetailsViewModel.serviceOutput.collectAsState()
     val serviceName = dumpsysDetailsViewModel.serviceName
 
     TopAppBar(
         title = { Text(serviceName) },
         navigationIcon = {
-        IconButton(onClick = { navController.popBackStack() }) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-        }
-    },
-    actions = {
-        if (!output.isEmpty()) {
-            IconButton(
-                onClick = {
-                    dumpsysDetailsViewModel.shareOutput()
-                },
-            ) {
-                Icon(Icons.Default.Share, contentDescription = "Share")
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            }
+        },
+        actions = {
+            if (!output.isEmpty()) {
+                IconButton(
+                    onClick = {
+                        dumpsysDetailsViewModel.shareOutput()
+                    },
+                ) {
+                    Icon(Icons.Default.Share, contentDescription = "Share")
+                }
             }
         }
-    }
     )
 }

@@ -29,6 +29,7 @@ import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewM
 import com.dgomon.systeminsight.presentation.getProp.GetPropTopBar
 import com.dgomon.systeminsight.presentation.logcat.LogcatTopBar
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
+import com.dgomon.systeminsight.presentation.settings.SettingsTopBar
 import com.dgomon.systeminsight.ui.navigation.AppNavHost
 import com.dgomon.systeminsight.ui.navigation.matchesRoute
 
@@ -56,6 +57,7 @@ fun MainNavigationBar() {
                 DumpsysDetailsTopBar(navController, viewModel)
             }  // or pass args if needed
         }
+        currentRoute == Destination.Settings.route -> { { SettingsTopBar(navController) } }
 
         else -> null
     }

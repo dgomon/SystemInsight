@@ -19,14 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.dgomon.systeminsight.R
-import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlViewModel
+import com.dgomon.systeminsight.presentation.settings.SettingsViewModel
 import com.dgomon.systeminsight.ui.common.CommonTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DumpsysTopBar(
     navController: NavController,
-    privilegeViewModel: PrivilegeControlViewModel = hiltViewModel(),
+    privilegeViewModel: SettingsViewModel = hiltViewModel(),
     dumpsysViewModel: DumpsysViewModel = hiltViewModel()
 ) {
     val query by dumpsysViewModel.query.collectAsState()

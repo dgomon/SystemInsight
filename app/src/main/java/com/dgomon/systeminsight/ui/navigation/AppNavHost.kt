@@ -15,7 +15,7 @@ import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
-import com.dgomon.systeminsight.presentation.privilege_control.SettingsScreen
+import com.dgomon.systeminsight.presentation.settings.SettingsScreen
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes.SERVICE_NAME_ARG
 

@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.presentation.privilege_control
+package com.dgomon.systeminsight.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class PrivilegeControlViewModel @Inject constructor(
+class SettingsViewModel @Inject constructor(
     private val serviceConnectionProvider: PrivilegedServiceConnectionProvider) : ViewModel() {
 
     val isConnected: StateFlow<Boolean> = serviceConnectionProvider.isConnected
@@ -20,8 +20,4 @@ class PrivilegeControlViewModel @Inject constructor(
         serviceConnectionProvider.releasePrivileges()
     }
 
-    override fun onCleared() {
-        releasePrivileges()
-        super.onCleared()
-    }
 }

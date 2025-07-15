@@ -1,4 +1,4 @@
-package com.dgomon.systeminsight.presentation.privilege_control
+package com.dgomon.systeminsight.presentation.settings
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,9 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    privilegeControlViewModel: PrivilegeControlViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
 ) {
-    val isConnected by privilegeControlViewModel.isConnected.collectAsState()
+    val isConnected by settingsViewModel.isConnected.collectAsState()
 
     Box(
         modifier = modifier
@@ -37,14 +37,14 @@ fun SettingsScreen(
     ) {
         Column {
             Button(
-                onClick = { privilegeControlViewModel.requestPrivileges() },
+                onClick = { settingsViewModel.requestPrivileges() },
                 enabled = !isConnected
             ) {
                 Text(text = "Connect")
             }
 
-            Button(onClick = {
-                privilegeControlViewModel.releasePrivileges() },
+            Button(
+                onClick = { settingsViewModel.releasePrivileges() },
                 enabled = isConnected
             ) {
                 Text(text = "Disconnect")
