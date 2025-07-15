@@ -19,5 +19,4 @@ class SettingsViewModel @Inject constructor(
     fun releasePrivileges() {
         serviceConnectionProvider.releasePrivileges()
     }
-
 }

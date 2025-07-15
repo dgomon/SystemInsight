@@ -6,6 +6,8 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.IBinder
 import android.util.Log
 import com.dgomon.systeminsight.BuildConfig
+import com.dgomon.systeminsight.core.service.PrivilegedCommandService
+import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Bound
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Checking
@@ -19,8 +21,6 @@ import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.NoPermission
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.RequestingPermission
 import com.dgomon.systeminsight.domain.shizuku.ShizukuStatus.Unsupported
 import com.dgomon.systeminsight.service.IPrivilegedCommandService
-import com.dgomon.systeminsight.core.service.PrivilegedCommandService
-import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -46,8 +46,6 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
     private val _status = MutableStateFlow(Disconnected)
     val status: StateFlow<ShizukuStatus> = _status.asStateFlow()
 
-    private var privilegedCommandService: IPrivilegedCommandService? = null
-
     override val isConnected: StateFlow<Boolean> = status
         .map { it == Connected }
         .stateIn(
@@ -56,11 +54,14 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
             initialValue = false
         )
 
+    private var privilegedCommandService: IPrivilegedCommandService? = null
+
     private val onRequestPermissionResultListener = Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
         Log.d(TAG, "Request permission result: $requestCode, $grantResult")
         if (requestCode == CODE_BIND_SERVICE) {
             if (grantResult == PERMISSION_GRANTED) {
                 _status.value = Bound
+                requestPrivileges()
             } else {
                 _status.value = Denied
             }
@@ -93,21 +94,21 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
             return false
         }
 
-        try {
+        return try {
             if (checkSelfPermission() == PERMISSION_GRANTED) {
-                return true
+                true
             } else if (shouldShowRequestPermissionRationale()) {
                 _status.value = NoPermission
-                return false
+                false
             } else {
                 _status.value = RequestingPermission
                 requestPermission(requestCode)
-                return false
+                false
             }
         } catch (e: Throwable) {
             Log.e(TAG, "Failed to check permission", e)
             _status.value = Error
-            return false
+            false
         }
     }
 
@@ -176,11 +177,9 @@ class ShizukuServiceManager @Inject constructor() : PrivilegedServiceConnectionP
         .debuggable(BuildConfig.DEBUG)
         .version(BuildConfig.VERSION_CODE)
 
-
     companion object {
         const val TAG = "ShizukuServiceManager"
         const val CODE_BIND_SERVICE = 1001
         const val CODE_UNBIND_SERVICE = 1002
     }
-
 }

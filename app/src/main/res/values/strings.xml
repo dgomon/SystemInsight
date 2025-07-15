@@ -12,6 +12,7 @@
     <string name="share_file">Share file</string>
     <string name="search_property">Search property</string>
     <string name="settings">Settings</string>
+    <string name="save">Save</string>
     <string name="use_shizuku_backend">Use Shizuku backend</string>
     <string name="grant_shizuku_access">Grant the app limited system-level access via Shizuku</string>
 </resources>
