@@ -69,17 +69,13 @@ fun GetPropTopBar(navController: NavController, getPropViewModel: GetPropViewMod
         },
         showMenu = true,
         menuItems = listOf(
+            stringResource(R.string.save) to {
+                getPropViewModel.shareOutput()
+            },
+
             stringResource(R.string.settings) to {
                 navController.navigate(Destination.Settings.route)
             }
         ),
-        actions = {
-            IconButton(
-                onClick = { getPropViewModel.shareOutput() },
-                enabled = true
-            ) {
-                Icon(Icons.Default.Save, contentDescription = "Save")
-            }
-        }
     )
 }
