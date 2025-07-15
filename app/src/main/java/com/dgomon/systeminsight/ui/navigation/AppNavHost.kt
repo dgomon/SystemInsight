@@ -1,5 +1,6 @@
-package com.dgomon.systeminsight.ui
+package com.dgomon.systeminsight.ui.navigation
 
+import Destination
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -11,13 +12,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.dgomon.systeminsight.R
+import bottomBarDestinations
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysScreen
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsScreen
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewModel
 import com.dgomon.systeminsight.presentation.getProp.GetPropScreen
 import com.dgomon.systeminsight.presentation.logcat.LogcatScreen
-import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlScreen
+import com.dgomon.systeminsight.presentation.privilege_control.SettingsScreen
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
 
 fun String.matchesRoute(routePattern: String): Boolean {
@@ -27,17 +28,6 @@ fun String.matchesRoute(routePattern: String): Boolean {
     return this.matches(regex)
 }
 
-enum class Destination(
-    val route: String,
-    val label: String,
-    val iconResId: Int,
-    val contentDescription: String
-) {
-    PRIVILEGE_CONTROL("control", "Control", R.drawable.ic_settings, "Control"),
-    LOGCAT("logcat", "Logcat", R.drawable.ic_settings, "Logcat"),
-    GETPROP("getprop", "Getprop", R.drawable.ic_settings, "Getprop"),
-    DUMPSYS("dumpsys", "Dumpsys", R.drawable.ic_settings, "Dumpsys"),
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,30 +42,24 @@ fun AppNavHost(
         modifier = modifier
     ) {
         // Static routes from Destination enum
-        Destination.entries.forEach { destination ->
+        bottomBarDestinations.forEach { destination ->
             composable(destination.route) { backStackEntry ->
                 Log.d("AppNavHost", "[$destination] backStackEntry=$backStackEntry hash=${backStackEntry.hashCode()}")
 
                 when (destination) {
-                    Destination.PRIVILEGE_CONTROL -> PrivilegeControlScreen()
-                    Destination.LOGCAT -> LogcatScreen(
+                    Destination.Logcat -> LogcatScreen(
                         navBackStackEntry = backStackEntry,
                         logcatViewModel = hiltViewModel(backStackEntry)
                     )
-                    Destination.GETPROP -> GetPropScreen()
-                    Destination.DUMPSYS -> DumpsysScreen { serviceName ->
+                    Destination.Getprop -> GetPropScreen()
+                    Destination.Dumpsys -> DumpsysScreen { serviceName ->
                         navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))
                     }
+                    Destination.DumpsysDetails -> SettingsScreen()
+                    Destination.Settings -> SettingsScreen()
                 }
             }
         }
-
-        composable(
-            route = Destination.PRIVILEGE_CONTROL.route,
-            content = {
-                PrivilegeControlScreen()
-            }
-        )
 
         // Dynamic route for dumpsys details
         composable(
@@ -97,6 +81,14 @@ fun AppNavHost(
                 dumpsysDetailsViewModel = viewModel,
             )
         }
+
+        // Settings
+        composable(
+            route = Destination.Settings.route,
+            content = {
+                SettingsScreen()
+            }
+        )
     }
 }
 

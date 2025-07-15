@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun PrivilegeControlScreen(
+fun SettingsScreen(
     modifier: Modifier = Modifier,
     privilegeControlViewModel: PrivilegeControlViewModel = hiltViewModel(),
 ) {

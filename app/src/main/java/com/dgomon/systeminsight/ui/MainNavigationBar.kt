@@ -1,5 +1,6 @@
 package com.dgomon.systeminsight.ui
 
+import Destination
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -11,10 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,29 +22,30 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import bottomBarDestinations
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysTopBar
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsTopBar
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewModel
 import com.dgomon.systeminsight.presentation.getProp.GetPropTopBar
 import com.dgomon.systeminsight.presentation.logcat.LogcatTopBar
-import com.dgomon.systeminsight.presentation.privilege_control.PrivilegeControlTopBar
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
+import com.dgomon.systeminsight.ui.navigation.AppNavHost
+import com.dgomon.systeminsight.ui.navigation.matchesRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavigationBar() {
     val navController = rememberNavController()
-    val startDestination = Destination.LOGCAT
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+    val startDestination = Destination.Logcat
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     
     val topBarContent = when {
 //        currentRoute == Destination.PRIVILEGE_CONTROL.route -> { @Composable { PrivilegeControlTopBar() } }
-        currentRoute == Destination.LOGCAT.route -> { @Composable { LogcatTopBar(navBackStackEntry = navBackStackEntry!!) } }
-        currentRoute == Destination.GETPROP.route -> { { GetPropTopBar() } }
-        currentRoute == Destination.DUMPSYS.route -> { { DumpsysTopBar() } }
+        currentRoute == Destination.Logcat.route -> { @Composable { LogcatTopBar(navBackStackEntry = navBackStackEntry!!) } }
+        currentRoute == Destination.Getprop.route -> { { GetPropTopBar() } }
+        currentRoute == Destination.Dumpsys.route -> { { DumpsysTopBar() } }
         currentRoute?.matchesRoute(DynamicRoutes.DumpsysDetailsWithArg) == true -> {
             {
                 val viewModel = hiltViewModel<DumpsysDetailsViewModel>(navBackStackEntry!!)
@@ -64,24 +64,17 @@ fun MainNavigationBar() {
         },
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                Destination.entries.forEachIndexed { index, destination ->
+                bottomBarDestinations.forEach { destination ->
                     NavigationBarItem(
-                        selected = selectedDestination == index,
+                        selected = currentRoute == destination.route,
                         onClick = {
-                            navController.navigate(route = destination.route) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
+                            navController.navigate(destination.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
-                                // Avoid multiple copies of the same destination when
-                                // reselecting the same item
                                 launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
                                 restoreState = true
                             }
-                            selectedDestination = index
                         },
                         icon = {
                             Icon(
