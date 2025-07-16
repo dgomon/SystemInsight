@@ -21,6 +21,7 @@ fun GetPropScreen(
     getPropViewModel: GetPropViewModel = hiltViewModel(),
 ) {
     val props by getPropViewModel.filteredProps.collectAsState()
+    val query by getPropViewModel.query.collectAsState()
 
     // Convert to tree
     val root = remember(props) { buildTree(props) }
@@ -34,7 +35,7 @@ fun GetPropScreen(
         LazyColumn {
             item {
                 Column {
-                    nodes.forEach { TreeNodeView(it) }
+                    nodes.forEach { TreeNodeView(node = it, searchQuery = query) }
                 }
             }
         }

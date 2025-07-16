@@ -33,7 +33,6 @@ class GetPropViewModel @Inject constructor(
         isSearchActive = !isSearchActive
     }
 
-
     private lateinit var listOfProps: List<String>
 
     // Combine query and props to emit filtered results

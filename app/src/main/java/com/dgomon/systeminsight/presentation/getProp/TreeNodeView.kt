@@ -19,21 +19,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.dgomon.systeminsight.ui.common.HighlightedText
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TreeNodeView(
     node: TreeNode,
-    indentLevel: Int = 1
+    indentLevel: Int = 1,
+    searchQuery: String = ""
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val rotationAngle by animateFloatAsState(
@@ -51,19 +50,18 @@ fun TreeNodeView(
                 .animateContentSize()
         ) {
             if (node.children.isEmpty()) {
-                Text(
-                    text = node.name,
-                    modifier = Modifier.weight(5f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                HighlightedText(
+                    line = node.name,
+                    query = searchQuery,
+                    modifier = Modifier
+                        .weight(5f),
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = node.value ?: "",
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.End
+                HighlightedText(
+                    line = node.value.orEmpty(),
+                    query = searchQuery,
+                    modifier = Modifier
+                        .weight(1f),
                 )
             } else {
                 Icon(
@@ -72,7 +70,10 @@ fun TreeNodeView(
                     modifier = Modifier.rotate(rotationAngle)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = node.name)
+                HighlightedText(
+                    line = node.name,
+                    query = searchQuery,
+                )
             }
         }
 
@@ -83,7 +84,7 @@ fun TreeNodeView(
         ) {
             Column {
                 node.children.forEach { child ->
-                    TreeNodeView(child, indentLevel + 1)
+                    TreeNodeView(child, indentLevel + 1, searchQuery)
                 }
             }
         }
