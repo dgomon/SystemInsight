@@ -35,28 +35,30 @@ fun DumpsysDetailsTopBar(
 
     TopAppBar(
         title = {
-            OutlinedTextField(
-                value = query,
-                onValueChange = dumpsysDetailsViewModel::setQuery,
-                placeholder = { Text(stringResource(R.string.search)) },
-                singleLine = true,
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null
-                    )
-                },
-                trailingIcon = {
-                    if (query.isNotEmpty()) {
-                        IconButton(onClick = { dumpsysDetailsViewModel.setQuery("") }) {
-                            Icon(Icons.Default.Close, contentDescription = "Clear")
+            if (!output.isBlank()) {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = dumpsysDetailsViewModel::setQuery,
+                    placeholder = { Text(stringResource(R.string.search)) },
+                    singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        if (query.isNotEmpty()) {
+                            IconButton(onClick = { dumpsysDetailsViewModel.setQuery("") }) {
+                                Icon(Icons.Default.Close, contentDescription = "Clear")
+                            }
                         }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp)
-            )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp)
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
