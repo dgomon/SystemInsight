@@ -40,7 +40,7 @@ import com.dgomon.systeminsight.ui.navigation.matchesRoute
 @Composable
 fun MainNavigationBar() {
     val navController = rememberNavController()
-    val startDestination = Destination.Logcat
+    val startDestination = Destination.Dumpsys
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route

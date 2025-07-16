@@ -26,6 +26,9 @@ class DumpsysDetailsViewModel @Inject constructor(
     private val _serviceOutput = MutableStateFlow("")
     val serviceOutput: StateFlow<String> = _serviceOutput.asStateFlow()
 
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query.asStateFlow()
+
     val serviceName: String = URLDecoder.decode(
         checkNotNull(savedStateHandle[SERVICE_NAME_ARG]),
         StandardCharsets.UTF_8.toString()
@@ -37,6 +40,10 @@ class DumpsysDetailsViewModel @Inject constructor(
 
     fun shareOutput() {
         shareManager.shareAsFile(serviceOutput.value, "${serviceName}.txt")
+    }
+
+    fun setQuery(newQuery: String) {
+        _query.value = newQuery
     }
 
     private fun loadServiceDetail() {
