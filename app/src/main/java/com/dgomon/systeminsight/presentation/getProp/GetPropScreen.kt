@@ -51,7 +51,7 @@ fun buildTree(entries: List<PropEntry>, delimiter: Char = '.') : TreeNode {
 
         for ((index, part) in parts.withIndex()) {
             val existing = current.children.find { it.name == part }
-            val node = existing ?: TreeNode(name = part).also { current.children += it }
+            val node = existing ?: TreeNode(name = part, parent = current).also { current.children += it }
             current = node
             if (index == parts.lastIndex) {
                 current.value = entry.value

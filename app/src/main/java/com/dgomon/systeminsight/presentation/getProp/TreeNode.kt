@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
 data class TreeNode(
+    val parent: TreeNode? = null,
     val name: String,
     var value: String? = null,
     val children: MutableList<TreeNode> = mutableListOf(),
