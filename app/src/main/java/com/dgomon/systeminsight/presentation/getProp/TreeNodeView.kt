@@ -51,14 +51,14 @@ fun TreeNodeView(
         ) {
             if (node.children.isEmpty()) {
                 HighlightedText(
-                    line = node.name,
+                    text = node.name,
                     query = searchQuery,
                     modifier = Modifier
                         .weight(5f),
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 HighlightedText(
-                    line = node.value.orEmpty(),
+                    text = node.value.orEmpty(),
                     query = searchQuery,
                     modifier = Modifier
                         .weight(1f),
@@ -71,7 +71,7 @@ fun TreeNodeView(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 HighlightedText(
-                    line = node.name,
+                    text = node.name,
                     query = searchQuery,
                 )
             }

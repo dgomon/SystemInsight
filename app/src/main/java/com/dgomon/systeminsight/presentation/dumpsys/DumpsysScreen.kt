@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dgomon.systeminsight.R
 import com.dgomon.systeminsight.presentation.settings.SettingsViewModel
+import com.dgomon.systeminsight.ui.common.HighlightedText
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +36,7 @@ fun DumpsysScreen(
     onServiceClick: (String) -> Unit,
 ) {
     val services by dumpsysViewModel.filteredServices.collectAsState()
+    val searchQuery by dumpsysViewModel.query.collectAsState()
     val isConnected by privilegeViewModel.isConnected.collectAsState()
 
     LaunchedEffect(isConnected) {
@@ -72,8 +74,9 @@ fun DumpsysScreen(
                                     .padding(horizontal = 8.dp),
                                 contentAlignment = Alignment.CenterStart
                             ) {
-                                Text(
+                                HighlightedText(
                                     text = service,
+                                    query = searchQuery,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.bodyMedium
