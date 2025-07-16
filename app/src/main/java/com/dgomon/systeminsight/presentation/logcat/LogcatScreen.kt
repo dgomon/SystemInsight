@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.dgomon.systeminsight.ui.common.HighlightedText
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,6 +29,7 @@ fun LogcatScreen(
     modifier: Modifier = Modifier,
     logcatViewModel: LogcatViewModel = hiltViewModel(navBackStackEntry),
 ) {
+    val searchQuery by logcatViewModel.query.collectAsState()
     val filteredLogLines by logcatViewModel.filteredLogLines.collectAsState()
     val isConnected by logcatViewModel.isConnected.collectAsState()
 
@@ -56,7 +58,7 @@ fun LogcatScreen(
                     .fillMaxSize()
             ) {
                 items(filteredLogLines) { line ->
-                    Text(text = line, style = MaterialTheme.typography.bodyMedium)
+                    HighlightedText(line = line, query = searchQuery)
                 }
             }
         }
