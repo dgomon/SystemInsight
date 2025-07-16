@@ -26,8 +26,8 @@ import com.dgomon.systeminsight.ui.common.CommonTopBar
 @Composable
 fun DumpsysTopBar(
     navController: NavController,
-    privilegeViewModel: SettingsViewModel = hiltViewModel(),
-    dumpsysViewModel: DumpsysViewModel = hiltViewModel()
+    dumpsysViewModel: DumpsysViewModel = hiltViewModel(),
+    privilegeViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val query by dumpsysViewModel.query.collectAsState()
     val isConnected by privilegeViewModel.isConnected.collectAsState()

@@ -47,7 +47,9 @@ fun AppNavHost(
                         navBackStackEntry = backStackEntry,
                         logcatViewModel = hiltViewModel(backStackEntry)
                     )
-                    Destination.Getprop -> GetPropScreen()
+                    Destination.Getprop -> GetPropScreen(
+                        getPropViewModel = hiltViewModel(backStackEntry)
+                    )
 
                     Destination.Dumpsys -> DumpsysScreen { serviceName ->
                         navController.navigate(DynamicRoutes.buildDumpsysDetailsRoute(serviceName))

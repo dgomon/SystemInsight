@@ -24,10 +24,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import bottomBarDestinations
 import com.dgomon.systeminsight.presentation.dumpsys.DumpsysTopBar
+import com.dgomon.systeminsight.presentation.dumpsys.DumpsysViewModel
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsTopBar
 import com.dgomon.systeminsight.presentation.dumpsys_details.DumpsysDetailsViewModel
 import com.dgomon.systeminsight.presentation.getProp.GetPropTopBar
+import com.dgomon.systeminsight.presentation.getProp.GetPropViewModel
 import com.dgomon.systeminsight.presentation.logcat.LogcatTopBar
+import com.dgomon.systeminsight.presentation.logcat.LogcatViewModel
 import com.dgomon.systeminsight.presentation.scaffold.DynamicRoutes
 import com.dgomon.systeminsight.presentation.settings.SettingsTopBar
 import com.dgomon.systeminsight.ui.navigation.AppNavHost
@@ -41,16 +44,36 @@ fun MainNavigationBar() {
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    
+
+    val logcatViewModel = if (currentRoute == Destination.Logcat.route && navBackStackEntry != null) {
+        hiltViewModel<LogcatViewModel>(navBackStackEntry!!)
+    } else null
+
+    val getPropViewModel = if (currentRoute == Destination.Getprop.route && navBackStackEntry != null) {
+        hiltViewModel<GetPropViewModel>(navBackStackEntry!!)
+    } else null
+
+    val dumpsysViewModel = if (currentRoute == Destination.Dumpsys.route && navBackStackEntry != null) {
+        hiltViewModel<DumpsysViewModel>(navBackStackEntry!!)
+    } else null
+
     val topBarContent = when {
-        currentRoute == Destination.Logcat.route -> {
+        currentRoute == Destination.Logcat.route && logcatViewModel != null -> {
             @Composable { LogcatTopBar(
                 navBackStackEntry = navBackStackEntry!!,
-                navController = navController
+                navController = navController,
+                logcatViewModel = logcatViewModel
             ) }
         }
-        currentRoute == Destination.Getprop.route -> { { GetPropTopBar(navController) } }
-        currentRoute == Destination.Dumpsys.route -> { { DumpsysTopBar(navController) } }
+
+        currentRoute == Destination.Getprop.route && getPropViewModel != null -> {
+            { GetPropTopBar(navController, getPropViewModel) }
+        }
+
+        currentRoute == Destination.Dumpsys.route && dumpsysViewModel != null -> {
+            { DumpsysTopBar(navController, dumpsysViewModel) }
+        }
+
         currentRoute?.matchesRoute(DynamicRoutes.DumpsysDetailsWithArg) == true -> {
             {
                 val viewModel = hiltViewModel<DumpsysDetailsViewModel>(navBackStackEntry!!)
