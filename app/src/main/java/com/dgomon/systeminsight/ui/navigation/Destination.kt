@@ -10,21 +10,21 @@ sealed class Destination(
     object Logcat : Destination(
         route = "logcat",
         label = "Logcat",
-        iconResId = R.drawable.ic_settings,
+        iconResId = R.drawable.ic_notes,
         contentDescription = "Logcat screen"
     )
 
     object Getprop : Destination(
         route = "getprop",
         label = "Getprop",
-        iconResId = R.drawable.ic_settings,
+        iconResId = R.drawable.ic_properties,
         contentDescription = "Getprop screen"
     )
 
     object Dumpsys : Destination(
         route = "dumpsys",
         label = "Dumpsys",
-        iconResId = R.drawable.ic_settings,
+        iconResId = R.drawable.ic_dumpsys,
         contentDescription = "Dumpsys screen"
     )
 
