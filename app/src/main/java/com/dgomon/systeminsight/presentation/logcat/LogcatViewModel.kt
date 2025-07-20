@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -23,6 +24,35 @@ enum class LogcatState {
     Resumed,     // Logs arrive, callback called
     Paused,      // Logs arrive, callback not called
 }
+
+data class LogcatEntry(
+    val date: String,            // e.g., "07-17"
+    val time: String,            // e.g., "08:55:28.792"
+    val pid: Int,                // e.g., 1305
+    val tid: Int,                // e.g., 1305
+    val logLevel: String,        // e.g., "I", "D", "E", etc.
+    val tag: String,             // e.g., "WifiHAL"
+    val message: String          // e.g., "In GetCachedScanResultsCommand::handleResponse"
+)
+
+val logcatRegex = Regex(
+    """^(\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}\.\d{3})\s+(\d+)\s+(\d+)\s+([VDIWEAF])\s+(\S+)\s*:\s+(.*)$"""
+)
+
+fun parseLogcatLine(line: String): LogcatEntry? {
+    val match = logcatRegex.matchEntire(line) ?: return null
+    val (date, time, pid, tid, level, tag, message) = match.destructured
+    return LogcatEntry(
+        date = date,
+        time = time,
+        pid = pid.toInt(),
+        tid = tid.toInt(),
+        logLevel = level,
+        tag = tag,
+        message = message.trim()
+    )
+}
+
 
 @HiltViewModel
 class LogcatViewModel @Inject constructor(
@@ -61,6 +91,14 @@ class LogcatViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    val parsedLogEntries: StateFlow<List<LogcatEntry>> = filteredLogLines
+        .map { lines -> lines.mapNotNull { parseLogcatLine(it) } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private val logCallback = object : ILogCallback.Stub() {
         override fun onLogLine(line: String) {
@@ -132,7 +170,7 @@ class LogcatViewModel @Inject constructor(
         _logLines.value = emptyList()
     }
 
-    fun shareOutput() {
+    fun exportOutput() {
         shareManager.shareAsFile(_logBuffer.toList().joinToString(
             System.lineSeparator()), "log_file.txt")
     }
