@@ -45,7 +45,7 @@ fun DumpsysDetailsScreen(
         val lines = remember(output) { output.lineSequence().toList() }
 
         LazyColumn(
-            modifier = modifier.fillMaxSize().padding(16.dp),
+            modifier = modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp),
         ) {
             item {
                 Text(

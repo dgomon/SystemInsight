@@ -105,7 +105,7 @@ fun PropertyDialog(
 @Composable
 fun TreeNodeView(
     node: TreeNode,
-    indentLevel: Int = 1,
+    indentLevel: Int = 0,
     searchQuery: String = ""
 ) {
     var showDialog by remember { mutableStateOf(false) }

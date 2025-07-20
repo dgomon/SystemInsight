@@ -51,7 +51,7 @@ fun DumpsysScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(start=16.dp, end = 16.dp)
             ) {
                 if (services.isEmpty()) {
                     Box(
@@ -70,8 +70,7 @@ fun DumpsysScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp)
-                                    .clickable { onServiceClick(service) }
-                                    .padding(horizontal = 8.dp),
+                                    .clickable { onServiceClick(service) },
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 HighlightedText(
