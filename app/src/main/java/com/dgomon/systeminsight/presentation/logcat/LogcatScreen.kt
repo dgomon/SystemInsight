@@ -1,6 +1,7 @@
 package com.dgomon.systeminsight.presentation.logcat
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -17,21 +18,27 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.dgomon.systeminsight.ui.common.HighlightedText
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -45,9 +52,15 @@ fun LogcatScreen(
     val filteredLogLines by logcatViewModel.filteredLogLines.collectAsState()
     val parsedLogEntries by logcatViewModel.parsedLogEntries.collectAsState()
     val isConnected by logcatViewModel.isConnected.collectAsState()
+    val clipboardManager = LocalClipboardManager.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         logcatViewModel.onScreenCreated(true)
+        logcatViewModel.copyEvents.collectLatest { logLine ->
+            clipboardManager.setText(AnnotatedString(logLine))
+            snackbarHostState.showSnackbar("Copied to clipboard")
+        }
     }
 
     RequirePrivilegedConnection(isConnected = isConnected, modifier = modifier, content = {
@@ -81,9 +94,12 @@ fun LogcatScreen(
                     }
 
                     Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = backgroundColor)
-                        .height(IntrinsicSize.Min),
+                            .fillMaxWidth()
+                            .background(color = backgroundColor)
+                            .height(IntrinsicSize.Min)
+                            .clickable(enabled = true, onClick = {
+                                logcatViewModel.onRowClicked(entry.rawLine)
+                            }),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         HorizontalDivider(
@@ -105,6 +121,25 @@ fun LogcatScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
+
+                        VerticalDivider(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(1.dp),
+                            thickness = DividerDefaults.Thickness, color = Color.LightGray
+                        )
+
+                        HighlightedText(
+                            text = entry.tag,
+                            query = searchQuery,
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .width(64.dp)
+                                .padding(end = 8.dp)  // Optional, to balance padding
+                        )
+
                         VerticalDivider(
                             modifier = Modifier
                                 .fillMaxHeight()

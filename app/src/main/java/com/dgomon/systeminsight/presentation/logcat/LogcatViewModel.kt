@@ -8,9 +8,11 @@ import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import com.dgomon.systeminsight.core.share.ShareManager
 import com.dgomon.systeminsight.service.ILogCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -26,6 +28,7 @@ enum class LogcatState {
 }
 
 data class LogcatEntry(
+    val rawLine: String,         // original line
     val date: String,            // e.g., "07-17"
     val time: String,            // e.g., "08:55:28.792"
     val pid: Int,                // e.g., 1305
@@ -43,6 +46,7 @@ fun parseLogcatLine(line: String): LogcatEntry? {
     val match = logcatRegex.matchEntire(line) ?: return null
     val (date, time, pid, tid, level, tag, message) = match.destructured
     return LogcatEntry(
+        rawLine = line,
         date = date,
         time = time,
         pid = pid.toInt(),
@@ -81,6 +85,14 @@ class LogcatViewModel @Inject constructor(
     val query: StateFlow<String> = _query.asStateFlow()
 
     private val _isScreenCreated = MutableStateFlow(false)
+
+    // In ViewModel:
+    private val _copyEvents = MutableSharedFlow<String>()
+    val copyEvents = _copyEvents.asSharedFlow()
+
+    fun onRowClicked(logLine: String) {
+        viewModelScope.launch { _copyEvents.emit(logLine) }
+    }
 
     // Combine query and services to emit filtered results
     val filteredLogLines: StateFlow<List<String>> = combine(_query, _logLines) { query, logLine ->
