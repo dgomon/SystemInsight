@@ -3,6 +3,7 @@ package com.dgomon.systeminsight.presentation.logcat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -93,67 +94,72 @@ fun LogcatScreen(
                         else -> Color.Transparent
                     }
 
-                    Row(modifier = Modifier
-                            .fillMaxWidth()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
                             .background(color = backgroundColor)
                             .height(IntrinsicSize.Min)
                             .clickable(enabled = true, onClick = {
                                 logcatViewModel.onRowClicked(entry.rawLine)
                             }),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                        ) {
+
                         HorizontalDivider(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp),
                             thickness = DividerDefaults.Thickness, color = Color.LightGray
                         )
 
-                        Box(
+                        Row(
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .width(32.dp)  // Fixed width for logLevel
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            contentAlignment = Alignment.Center
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(
-                                text = entry.logLevel,
-                                style = MaterialTheme.typography.bodyMedium,
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(32.dp)  // Fixed width for logLevel
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = entry.logLevel,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+
+                            VerticalDivider(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(1.dp),
+                                thickness = DividerDefaults.Thickness, color = Color.LightGray
+                            )
+
+                            HighlightedText(
+                                text = entry.tag,
+                                query = searchQuery,
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .width(64.dp)
+                                    .padding(end = 8.dp)  // Optional, to balance padding
+                            )
+
+                            VerticalDivider(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(1.dp),
+                                thickness = DividerDefaults.Thickness, color = Color.LightGray
+                            )
+                            HighlightedText(
+                                text = entry.message,
+                                query = searchQuery,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier
+                                    .weight(1f)  // Take all remaining space
+                                    .padding(end = 8.dp)  // Optional, to balance padding
                             )
                         }
-
-                        VerticalDivider(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp),
-                            thickness = DividerDefaults.Thickness, color = Color.LightGray
-                        )
-
-                        HighlightedText(
-                            text = entry.tag,
-                            query = searchQuery,
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .width(64.dp)
-                                .padding(end = 8.dp)  // Optional, to balance padding
-                        )
-
-                        VerticalDivider(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .width(1.dp),
-                            thickness = DividerDefaults.Thickness, color = Color.LightGray
-                        )
-                        HighlightedText(
-                            text = entry.message,
-                            query = searchQuery,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier
-                                .weight(1f)  // Take all remaining space
-                                .padding(end = 8.dp)  // Optional, to balance padding
-                        )
                     }
                 }
             }
