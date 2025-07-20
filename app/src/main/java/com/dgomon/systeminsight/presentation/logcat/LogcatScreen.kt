@@ -2,6 +2,7 @@ package com.dgomon.systeminsight.presentation.logcat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -40,6 +41,20 @@ import androidx.navigation.NavBackStackEntry
 import com.dgomon.systeminsight.ui.common.HighlightedText
 import com.dgomon.systeminsight.ui.common.RequirePrivilegedConnection
 import kotlinx.coroutines.flow.collectLatest
+
+@Composable
+private fun logLevelBackgroundColor(level: String): Color {
+    val isDark = isSystemInDarkTheme()
+    return when (level) {
+        "V" -> if (isDark) Color.DarkGray else Color.LightGray
+        "D" -> if (isDark) Color(0xFF0D47A1) else Color(0xFFBBDEFB)
+        "I" -> if (isDark) Color(0xFF1B5E20) else Color(0xFFC8E6C9)
+        "W" -> if (isDark) Color(0xFFF57F17) else Color(0xFFFFF9C4)
+        "E" -> if (isDark) Color(0xFFB71C1C) else Color(0xFFFFCDD2)
+        "F" -> if (isDark) Color(0xFF4A148C) else Color(0xFFE1BEE7)
+        else -> Color.Transparent
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -84,20 +99,10 @@ fun LogcatScreen(
                     .fillMaxSize()
             ) {
                 items(parsedLogEntries) { entry ->
-                    val backgroundColor = when (entry.logLevel) {
-                        "V" -> Color.LightGray
-                        "D" -> Color(0xFFBBDEFB) // light blue
-                        "I" -> Color(0xFFC8E6C9) // light green
-                        "W" -> Color(0xFFFFF9C4) // light yellow
-                        "E" -> Color(0xFFFFCDD2) // light red
-                        "F" -> Color(0xFFE1BEE7) // light purple
-                        else -> Color.Transparent
-                    }
-
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .background(color = backgroundColor)
+                            .background(color = logLevelBackgroundColor(entry.logLevel))
                             .height(IntrinsicSize.Min)
                             .clickable(enabled = true, onClick = {
                                 logcatViewModel.onRowClicked(entry.rawLine)
@@ -105,7 +110,8 @@ fun LogcatScreen(
                         ) {
 
                         HorizontalDivider(
-                            thickness = DividerDefaults.Thickness, color = Color.LightGray
+                            thickness = DividerDefaults.Thickness,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                         )
 
                         Row(
@@ -131,7 +137,8 @@ fun LogcatScreen(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .width(1.dp),
-                                thickness = DividerDefaults.Thickness, color = Color.LightGray
+                                thickness = DividerDefaults.Thickness,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                             )
 
                             HighlightedText(
@@ -149,7 +156,8 @@ fun LogcatScreen(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .width(1.dp),
-                                thickness = DividerDefaults.Thickness, color = Color.LightGray
+                                thickness = DividerDefaults.Thickness,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                             )
                             HighlightedText(
                                 text = entry.message,
