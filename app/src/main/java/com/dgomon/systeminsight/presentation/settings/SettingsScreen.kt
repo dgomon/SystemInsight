@@ -46,8 +46,6 @@ fun SettingsScreen(
     val logBufferSize by settingsViewModel.logBufferSize.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var inputValue by remember { mutableStateOf(logBufferSize.toString()) }
-    val version = settingsViewModel.version
-    val versionCode = settingsViewModel.versionCode
 
     val parsedValue = inputValue.toIntOrNull()
 
@@ -127,7 +125,8 @@ fun SettingsScreen(
                     )
 
                     Text(
-                        text = "${stringResource(R.string.current_version)}: v$version ($versionCode)",
+                        text = "${stringResource(R.string.current_version)}: " +
+                                "v$settingsViewModel.version ($settingsViewModel.versionCode)",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
