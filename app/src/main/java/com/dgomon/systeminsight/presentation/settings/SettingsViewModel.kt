@@ -1,16 +1,22 @@
 package com.dgomon.systeminsight.presentation.settings
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
+import com.dgomon.systeminsight.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider) : ViewModel() {
+    private val serviceConnectionProvider: PrivilegedServiceConnectionProvider,
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     val isConnected: StateFlow<Boolean> = serviceConnectionProvider.isConnected
+    val logBufferSize: StateFlow<Int> = settingsRepository.logBufferSize
 
     fun requestPrivileges() {
         serviceConnectionProvider.requestPrivileges()
@@ -18,5 +24,11 @@ class SettingsViewModel @Inject constructor(
 
     fun releasePrivileges() {
         serviceConnectionProvider.releasePrivileges()
+    }
+
+    fun setLogBufferSize(size: Int) {
+        viewModelScope.launch {
+            settingsRepository.setLogBufferSize(size)
+        }
     }
 }

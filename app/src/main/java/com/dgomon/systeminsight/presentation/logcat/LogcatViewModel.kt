@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dgomon.systeminsight.core.service.PrivilegedServiceConnectionProvider
 import com.dgomon.systeminsight.core.share.ShareManager
+import com.dgomon.systeminsight.domain.repository.SettingsRepository
 import com.dgomon.systeminsight.service.ILogCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -61,16 +62,16 @@ fun parseLogcatLine(line: String): LogcatEntry? {
 @HiltViewModel
 class LogcatViewModel @Inject constructor(
     private val serviceConnectionProvider: PrivilegedServiceConnectionProvider,
+    private val settingsRepository: SettingsRepository,
     private val shareManager: ShareManager
 ) : ViewModel() {
     companion object {
         private const val TAG = "LogViewModel"
-        private const val LOG_BUFFER_CAPACITY = 20000
         private const val LOG_DISPLAY_CAPACITY = 100
     }
 
     // aggregates logs internally in the ViewModel
-    private val _logBuffer = ArrayDeque<String>(LOG_BUFFER_CAPACITY)
+    private val _logBuffer = ArrayDeque<String>()
 
     // expose the logs to the LogcatScreen
     private val _logLines = MutableStateFlow<List<String>>(emptyList())
@@ -189,14 +190,18 @@ class LogcatViewModel @Inject constructor(
 
     private suspend fun appendToBuffer(line: String) {
         logMutex.withLock {
-            if (_logBuffer.size >= LOG_BUFFER_CAPACITY) {
-                _logBuffer.removeFirst()
-            }
             _logBuffer.addLast(line)
+            enforceCapacity(settingsRepository.logBufferSize.value)
 
             // Update _logLines with only the latest LOG_DISPLAY_CAPACITY entries
             val start = (_logBuffer.size - LOG_DISPLAY_CAPACITY).coerceAtLeast(0)
             _logLines.value = _logBuffer.drop(start)
+        }
+    }
+
+    private fun enforceCapacity(maxSize: Int) {
+        while (_logBuffer.size > maxSize) {
+            _logBuffer.removeFirst()
         }
     }
 

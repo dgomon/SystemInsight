@@ -71,10 +71,12 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.datastore.core)
     kapt(libs.dagger.hilt.compiler)
 
     // For flow-based stream parsing
 //    implementation(libs.kotlinx.coroutines.flow)
+    implementation(libs.androidx.datastore.preferences)
 
 
     testImplementation(libs.junit)
