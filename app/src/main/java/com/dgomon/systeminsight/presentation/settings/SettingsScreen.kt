@@ -46,6 +46,8 @@ fun SettingsScreen(
     val logBufferSize by settingsViewModel.logBufferSize.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
     var inputValue by remember { mutableStateOf(logBufferSize.toString()) }
+    val version = settingsViewModel.version
+    val versionCode = settingsViewModel.versionCode
 
     val parsedValue = inputValue.toIntOrNull()
     val isValid = parsedValue != null && parsedValue in 100..10000
@@ -93,7 +95,6 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
                     .clickable(enabled = true, onClick = {
-                        // todo: how to idiomatically display alert dialog here?
                         showDialog = true
                     }),
                 verticalAlignment = Alignment.CenterVertically,
@@ -107,6 +108,27 @@ fun SettingsScreen(
 
                     Text(
                         text = "$logBufferSize lines",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.about),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+
+                    Text(
+                        text = "${stringResource(R.string.current_version)}: v$version ($versionCode)",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )

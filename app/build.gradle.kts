@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.org.apache.commons.io.output.ByteArrayOutputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -14,9 +16,8 @@ android {
         applicationId = "com.dgomon.systeminsight"
         minSdk = 29
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
-
+        versionName = getVersionName()
+        versionCode = computeVersionCode()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "APPLICATION_ID", "\"${applicationId}\"")
@@ -86,4 +87,26 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+fun getGitTag(): String? {
+    val stdout = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", "describe", "--tags", "--abbrev=0")
+        isIgnoreExitValue = true
+        standardOutput = stdout
+    }
+    return stdout.toString().trim().takeIf { it.startsWith("v") }
+}
+1
+fun getVersionName(): String {
+    return getGitTag()?.removePrefix("v") ?: "0.0.0-dev"
+}
+
+fun computeVersionCode(): Int {
+    val (major, minor, patch) = getVersionName()
+        .split("-")[0] // strip qualifiers
+        .split(".")
+        .map { it.toIntOrNull() ?: 0 }
+    return major * 10000 + minor * 100 + patch
 }
