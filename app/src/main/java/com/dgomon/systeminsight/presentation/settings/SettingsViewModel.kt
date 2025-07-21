@@ -21,6 +21,8 @@ class SettingsViewModel @Inject constructor(
     val logBufferSize: StateFlow<Int> = settingsRepository.logBufferSize
     val version = appInfoProvider.versionName
     val versionCode = appInfoProvider.versionCode
+    val logBufferSizeRange = 100..10_000
+
 
     fun requestPrivileges() {
         serviceConnectionProvider.requestPrivileges()
@@ -34,5 +36,9 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             settingsRepository.setLogBufferSize(size)
         }
+    }
+
+    fun isValidLogBufferSize(value: Int?): Boolean {
+        return value in logBufferSizeRange
     }
 }

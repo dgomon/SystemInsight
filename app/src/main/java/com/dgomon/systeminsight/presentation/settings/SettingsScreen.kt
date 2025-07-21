@@ -50,7 +50,6 @@ fun SettingsScreen(
     val versionCode = settingsViewModel.versionCode
 
     val parsedValue = inputValue.toIntOrNull()
-    val isValid = parsedValue != null && parsedValue in 100..10000
 
     Box(
         modifier = modifier
@@ -145,7 +144,7 @@ fun SettingsScreen(
                             settingsViewModel.setLogBufferSize(parsedValue!!)
                             showDialog = false
                         },
-                        enabled = isValid
+                        enabled = settingsViewModel.isValidLogBufferSize(parsedValue)
                     ) {
                         Text(stringResource(ok))
                     }
@@ -163,7 +162,7 @@ fun SettingsScreen(
                         OutlinedTextField(
                             value = inputValue,
                             onValueChange = { inputValue = it },
-                            isError = parsedValue == null || parsedValue !in 100..10000,
+                            isError = parsedValue == null || !settingsViewModel.isValidLogBufferSize(parsedValue),
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                         )
