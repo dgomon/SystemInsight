@@ -126,7 +126,7 @@ fun SettingsScreen(
 
                     Text(
                         text = "${stringResource(R.string.current_version)}: " +
-                                "v$settingsViewModel.version ($settingsViewModel.versionCode)",
+                                "v${settingsViewModel.version} (${settingsViewModel.versionCode})",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
