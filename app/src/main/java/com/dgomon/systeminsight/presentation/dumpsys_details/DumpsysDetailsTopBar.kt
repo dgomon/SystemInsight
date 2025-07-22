@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,7 +73,7 @@ fun DumpsysDetailsTopBar(
                         dumpsysDetailsViewModel.shareOutput()
                     },
                 ) {
-                    Icon(Icons.Default.Share, contentDescription = "Share")
+                    Icon(Icons.Default.Save, contentDescription = "Save")
                 }
             }
         }

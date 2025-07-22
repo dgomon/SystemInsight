@@ -69,7 +69,7 @@ fun GetPropTopBar(navController: NavController, getPropViewModel: GetPropViewMod
         },
         showMenu = true,
         menuItems = listOf(
-            stringResource(R.string.save) to {
+            stringResource(R.string.save_properties) to {
                 getPropViewModel.shareOutput()
             },
 

@@ -14,8 +14,9 @@
     <string name="search_property">Search property</string>
     <string name="settings">Settings</string>
     <string name="export">Export</string>
-    <string name="export_logs">Export logs</string>
+    <string name="save_logs">Save logs</string>
     <string name="save">Save</string>
+    <string name="save_properties">Save properties</string>
     <string name="use_shizuku_backend">Use Shizuku backend</string>
     <string name="logcat_buffer_size_title">Logcat buffer size (lines)</string>
     <string name="grant_shizuku_access">Grant the app limited system-level access via Shizuku</string>

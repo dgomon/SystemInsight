@@ -64,7 +64,7 @@ fun LogcatTopBar(
         showMenu = true,
         menuItems = listOf(
 
-            stringResource(R.string.export_logs) to {
+            stringResource(R.string.save_logs) to {
                 logcatViewModel.exportOutput()
             },
 
