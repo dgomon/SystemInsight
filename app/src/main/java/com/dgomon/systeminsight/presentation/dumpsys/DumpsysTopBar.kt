@@ -1,7 +1,8 @@
 package com.dgomon.systeminsight.presentation.dumpsys
 
+import Destination
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -55,7 +56,7 @@ fun DumpsysTopBar(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(end = 16.dp)
+                        .heightIn(min = 56.dp)
                 )
             }
             else {
