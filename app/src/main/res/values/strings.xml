@@ -25,4 +25,7 @@
     <string name="saved_log_lines">Saved Log Lines</string>
     <string name="about">About</string>
     <string name="current_version">Current version</string>
+    <string name="no_logs">No logs</string>
+    <string name="no_logs_to_display">No logs to display</string>
+    <string name="press_the_play">Press the Play button above to start capturing logs.</string>
 </resources>
