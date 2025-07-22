@@ -145,7 +145,8 @@ fun TreeNodeView(
                     query = searchQuery,
                     modifier = Modifier.weight(1f),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Icon(
@@ -158,7 +159,8 @@ fun TreeNodeView(
                     text = node.name,
                     query = searchQuery,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
